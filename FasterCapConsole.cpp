@@ -49,22 +49,22 @@ int FasterCapConsole::main(int& argc, wxChar **argv, char bOption)
     bool ret;
 	CSolveCap solveMain;
 	int i, retStatus;
-	wxString inputArgs, errMsg;
+	std::string inputArgs, errMsg;
 	CAutoRefGlobalVars globalVars, defGlobalVars;
 
 	// copy input arguments in a string for proper parsing (e.g. taking care of file names with spaces)
-	inputArgs.Clear();
+	//inputArgs.Clear();
 	for(i=1; i<argc; i++) {
 		inputArgs += argv[i];
 		// this puts an extra trailing space in the end but that's ok anyway for the parser
-		inputArgs += wxT(" ");
+		inputArgs += (" ");
 	}
 
 	// dump command args for debug
 	//printf("%s\n", (const char*)inputArgs);
 
 	// parse command line
-	ret = ParseCmdLine((const char*)inputArgs, globalVars, errMsg);
+	ret = ParseCmdLine((const char*)inputArgs.c_str(), globalVars, errMsg);
 
 	// if no parser error
 	if(ret == false && bOption != '?' && bOption != 'v') {
@@ -75,7 +75,7 @@ int FasterCapConsole::main(int& argc, wxChar **argv, char bOption)
 	else {
 		if(bOption == '?' || bOption == 'v') {
 			retStatus = FC_NORMAL_END;
-			errMsg = wxT("");
+			errMsg = ("");
 		}
 		else {
 			retStatus = FC_COMMAND_LINE_ERROR;
@@ -90,7 +90,7 @@ int FasterCapConsole::main(int& argc, wxChar **argv, char bOption)
 
 		if(bOption != 'v') {
 			// print error
-			ErrMsg((const char*)errMsg);
+			//ErrMsg((const char*)errMsg);
 			LogMsg("Usage: %s <input file> [-a<relative error>] [-ap]\n", (const char*)argv[0]);
 			LogMsg("                 [-m<mesh>] [-mc<mesh curvature] [-t<tolerance>]\n");
 			LogMsg("                 [-d<interaction coeff>] [-f<outofcore>] [-g]\n");
@@ -133,14 +133,14 @@ int FasterCapConsole::main(int& argc, wxChar **argv, char bOption)
 
 
 // returns 'true' if errors in the parsing
-bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &globalVars, wxString &errMsg)
+bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &globalVars, std::string &errMsg)
 {
 	char argStr[CMDLINEPARSER_MAX_INPUT_STR_LEN], *cmdStr;
 	int res, skip;
 	bool cmderr;
 
     // clean error message
-    errMsg.Clear();
+    //errMsg.Clear();
 
 	// copy pointer, not to change 'commandStr'
 	// (required when the function is called by automation passing a 'const')
@@ -156,8 +156,8 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 	res = getSubstring(cmdStr, argStr, &skip);
 	cmdStr += skip;
 	if( res == 0 || res == EOF)  {
-		errMsg = wxString::Format(wxT("FasterCap launched without enough arguments! You must specify at least the input file name\n"));
-		errMsg += wxString::Format(wxT("Command line is: %s\n"), cmdStr);
+		//errMsg = std::string::Format(wxT("FasterCap launched without enough arguments! You must specify at least the input file name\n"));
+		//errMsg += std::string::Format(wxT("Command line is: %s\n"), cmdStr);
 		return true;
 	}
 
@@ -169,8 +169,8 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 			if(argStr[1] == 's') {
 				if(sscanf(&(argStr[2]), "%lf", &(globalVars.m_dMaxDiscSide)) != 1) {
 					cmderr = true;
-					//errMsg = wxString::Format(wxT("%s: bad side discretization value '%s'\n"), commandStr, &argStr[2]);
-					errMsg = wxString::Format(wxT("%s: unsupported parameter '%s'\n"), commandStr, argStr);
+					//errMsg = std::string::Format(wxT("%s: bad side discretization value '%s'\n"), commandStr, &argStr[2]);
+					//errMsg = std::string::Format(wxT("%s: unsupported parameter '%s'\n"), commandStr, argStr);
 				}
 			}
 
@@ -180,12 +180,12 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 				if(argStr[2] == 'c') {
 					if(sscanf(&(argStr[3]), "%lf", &(globalVars.m_dMeshCurvCoeff)) != 1) {
 						cmderr = true;
-						errMsg = wxString::Format(wxT("%s: bad mesh curvature coefficient '%s'\n"), commandStr, &argStr[2]);
+						//errMsg = std::string::Format(wxT("%s: bad mesh curvature coefficient '%s'\n"), commandStr, &argStr[2]);
 					}
 				}
 				else if(sscanf(&(argStr[2]), "%lf", &(globalVars.m_dMeshEps)) != 1) {
 					cmderr = true;
-					errMsg = wxString::Format(wxT("%s: bad mesh relative refinement value '%s'\n"), commandStr, &argStr[3]);
+					//errMsg = std::string::Format(wxT("%s: bad mesh relative refinement value '%s'\n"), commandStr, &argStr[3]);
 				}
 			}
 
@@ -193,7 +193,7 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 			else if(argStr[1] == 'd') {
 				if(sscanf(&(argStr[2]), "%lf", &(globalVars.m_dEpsRatio)) != 1) {
 					cmderr = true;
-					errMsg = wxString::Format(wxT("%s: bad direct potential interaction coefficient to mesh refinement ratio value '%s'\n"), commandStr, &argStr[2]);
+					//errMsg = std::string::Format(wxT("%s: bad direct potential interaction coefficient to mesh refinement ratio value '%s'\n"), commandStr, &argStr[2]);
 				}
 			}
 
@@ -201,7 +201,7 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 			else if(argStr[1] == 'f') {
 				if(sscanf(&(argStr[2]), "%lf", &(globalVars.m_dOutOfCoreRatio)) != 1) {
 					cmderr = true;
-					errMsg = wxString::Format(wxT("%s: Out-Of-Core free memory to link memory condition '%s'\n"), commandStr, &argStr[2]);
+					//errMsg = std::string::Format(wxT("%s: Out-Of-Core free memory to link memory condition '%s'\n"), commandStr, &argStr[2]);
 				}
 			}
 
@@ -217,14 +217,14 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 					globalVars.m_ucPrecondType |= AUTOREFINE_PRECOND_BLOCK;
 					if(sscanf(&(argStr[3]), "%u", &(globalVars.m_uiBlockPreSize)) != 1) {
 						cmderr = true;
-						errMsg = wxString::Format(wxT("%s: bad preconditioner dimension '%s'\n"), commandStr, &argStr[3]);
+						//errMsg = std::string::Format(wxT("%s: bad preconditioner dimension '%s'\n"), commandStr, &argStr[3]);
 					}
 				}
 				else if (argStr[2] == 'S' || argStr[2] == 's') {
 					globalVars.m_ucPrecondType |= AUTOREFINE_PRECOND_SUPER;
 					if(sscanf(&(argStr[3]), "%u", &(globalVars.m_uiSuperPreDim)) != 1) {
 						cmderr = true;
-						errMsg = wxString::Format(wxT("%s: bad preconditioner dimension '%s'\n"), commandStr, &argStr[3]);
+						//errMsg = std::string::Format(wxT("%s: bad preconditioner dimension '%s'\n"), commandStr, &argStr[3]);
 					}
 				}
 				else if (argStr[2] == 'H' || argStr[2] == 'h') {
@@ -232,25 +232,25 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 					if (argStr[3] == 's') {
 						if(sscanf(&(argStr[4]), "%lf", &(globalVars.m_dMaxHierPreDiscSide)) != 1) {
 							cmderr = true;
-							errMsg = wxString::Format(wxT("%s: bad preconditioner side discretization value '%s'\n"), commandStr, &argStr[4]);
+							//errMsg = std::string::Format(wxT("%s: bad preconditioner side discretization value '%s'\n"), commandStr, &argStr[4]);
 						}
 					}
 					else if (argStr[3] == 'e') {
 						if(sscanf(&(argStr[4]), "%lf", &(globalVars.m_dHierPreEps)) != 1) {
 							cmderr = true;
-							errMsg = wxString::Format(wxT("%s: bad preconditioner mutual potential epsilon value  '%s'\n"), commandStr, &argStr[4]);
+							//errMsg = std::string::Format(wxT("%s: bad preconditioner mutual potential epsilon value  '%s'\n"), commandStr, &argStr[4]);
 						}
 					}
 					else if(argStr[1] == 't') {
 						if(sscanf(&(argStr[4]), "%lf", &(globalVars.m_dHierPreGmresTol)) != 1) {
 							cmderr = true;
-							errMsg = wxString::Format(wxT("%s: bad preconditioner GMRES tolerance value '%s'\n"), commandStr, &argStr[4]);
+							//errMsg = std::string::Format(wxT("%s: bad preconditioner GMRES tolerance value '%s'\n"), commandStr, &argStr[4]);
 						}
 					}
 				}
 				else {
 					cmderr = true;
-					errMsg = wxString::Format(wxT("%s: bad preconditioner type '%s'\n"), commandStr, &argStr[2]);
+					//errMsg = std::string::Format(wxT("%s: bad preconditioner type '%s'\n"), commandStr, &argStr[2]);
 				}
 			}
 
@@ -297,7 +297,7 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 			else if(argStr[1] == 't') {
 				if(sscanf(&(argStr[2]), "%lf", &(globalVars.m_dGmresTol)) != 1) {
 					cmderr = true;
-					errMsg = wxString::Format(wxT("%s: bad GMRES iteration tolerance '%s'\n"), commandStr, &argStr[2]);
+					//errMsg = std::string::Format(wxT("%s: bad GMRES iteration tolerance '%s'\n"), commandStr, &argStr[2]);
 				}
 			}
 
@@ -332,14 +332,14 @@ bool FasterCapConsole::ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &
 					globalVars.m_bAuto = true;
 					if(sscanf(&(argStr[2]), "%lf", &(globalVars.m_dAutoMaxErr)) != 1) {
 						cmderr = true;
-						errMsg = wxString::Format(wxT("%s: bad max error value for auto option'%s'\n"), commandStr, &argStr[2]);
+						//errMsg = std::string::Format(wxT("%s: bad max error value for auto option'%s'\n"), commandStr, &argStr[2]);
 					}
 				}
 			}
 
 			// '-b' is the console option; not to be passed to FasterCap engine
 			else if(argStr[1] != 'b') {
-				errMsg = wxString::Format(wxT("%s: illegal option -- '-%s'\n"), commandStr, &(argStr[1]));
+				//errMsg = std::string::Format(wxT("%s: illegal option -- '-%s'\n"), commandStr, &(argStr[1]));
 				cmderr = true;
 			}
 		}

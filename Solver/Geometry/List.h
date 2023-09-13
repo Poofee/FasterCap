@@ -159,7 +159,7 @@ public:
 
 		inline T operator*()
 		{
-			ASSERT(p);
+			//ASSERT(p);
 			return (p->data);
 		}
 
@@ -219,7 +219,7 @@ public:
 
 		// if first element in list
 		if( head == NULL ) {
-			ASSERT(tail == NULL);
+			//ASSERT(tail == NULL);
 			head = tail = new Cell(dat);
 		}
 		else {
@@ -240,7 +240,7 @@ public:
 
 		// if first element in list
 		if( head == NULL ) {
-			ASSERT(tail == NULL);
+			//ASSERT(tail == NULL);
 			head = tail = new Cell(dat);
 		}
 		else {
@@ -267,9 +267,9 @@ public:
 
 			// if only one element in list
 			if(elenum == 1) {
-				ASSERT(head->next == NULL);
-				ASSERT(head->prev == NULL);
-				ASSERT(head == tail);
+				//ASSERT(head->next == NULL);
+				//ASSERT(head->prev == NULL);
+				//ASSERT(head == tail);
 				delete head;
 				head = tail = NULL;
 			}
@@ -304,9 +304,9 @@ public:
 
 			// if only one element in list
 			if(elenum == 1) {
-				ASSERT(tail->next == NULL);
-				ASSERT(tail->prev == NULL);
-				ASSERT(head == tail);
+				//ASSERT(tail->next == NULL);
+				//ASSERT(tail->prev == NULL);
+				//ASSERT(head == tail);
 				delete tail;
 				head = tail = NULL;
 			}
@@ -341,13 +341,13 @@ public:
 
 			// if only one element in list
 			if(elenum == 1) {
-				ASSERT(tmpCell == head);
-				ASSERT(head == tail);
+				//ASSERT(tmpCell == head);
+				//ASSERT(head == tail);
 				delete head;
 				head = tail = NULL;
 			}
 			else if (tmpCell == head) {
-				ASSERT(head->next);
+				//ASSERT(head->next);
 				// shift head forward
 				head = head->next;
 				head->prev = NULL;
@@ -355,7 +355,7 @@ public:
 				delete tmpCell;
 			}
 			else if (tmpCell == tail) {
-				ASSERT(tail->prev);
+				//ASSERT(tail->prev);
 				// shift tail backward
 				tail = tail->prev;
 				tail->next = NULL;
@@ -363,8 +363,8 @@ public:
 				delete tmpCell;
 			}
 			else {
-				ASSERT(tmpCell->next);
-				ASSERT(tmpCell->prev);
+				//ASSERT(tmpCell->next);
+				//ASSERT(tmpCell->prev);
 				// relink prev and next cells to skip cell to be popped
 				tmpCell->prev->next = tmpCell->next;
 				tmpCell->next->prev = tmpCell->prev;

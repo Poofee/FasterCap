@@ -105,7 +105,7 @@ void CMultHier::ComputePanelCharges_fast()
 				// and charge is the sum of left and right sub-tree charges
 				if(m_clsRecursVec[i+1] == m_clsRecursVec[i]->m_pRight) {
 					m_clsRecursVec[i]->m_dCharge = m_clsRecursVec[i]->m_pLeft->m_dCharge + m_clsRecursVec[i]->m_pRight->m_dCharge;
-					ASSERT(fabs(m_clsRecursVec[i]->m_dCharge) < 1E20);
+					//ASSERT(fabs(m_clsRecursVec[i]->m_dCharge) < 1E20);
 					// clear potentials (for next ComputePanelPotentials() routine)
 					m_clsRecursVec[i]->m_dPotential = 0.0;
 					i--;
@@ -213,7 +213,7 @@ int CMultHier::ComputePanelPotentials_2fast()
                     if(localChunk < m_ulLinkChunkNum[m_ucInteractionLevel]) {
                         // node potentials have already been zeroed in ComputePanelCharges_fast()
                         m_pNodes[i]->m_dPotential += (localPanelPtrLinks[localChunk][localPosInChunk])->m_dCharge * localPotCoeffLinks[localChunk][localPosInChunk];
-                        ASSERT(fabs(m_pNodes[i]->m_dPotential) < 1E20);
+                        //ASSERT(fabs(m_pNodes[i]->m_dPotential) < 1E20);
                     }
                 }
             }
@@ -310,7 +310,7 @@ int CMultHier::MultiplyMatByVec_fast(CLin_Vector *v, CLin_Vector *q)
 			// Vol. 42, No. 7, 1994
 
 			size = (*q).size();
-			ASSERT(size == (*v).size());
+			//ASSERT(size == (*v).size());
 
 			// subtract last row from all the previous conductor rows, except the last one
 			lastrow = (*v)[size-1];
@@ -338,9 +338,9 @@ int CMultHier::MultiplyMatByVec_fast(CLin_Vector *v, CLin_Vector *q)
 		// the real parts and the second one the complex parts
 
 		size = (*q).size();
-		ASSERT(size == (*v).size());
+		//ASSERT(size == (*v).size());
 		halfsize = size / 2;
-		ASSERT(halfsize * 2 == size);
+		//ASSERT(halfsize * 2 == size);
 
 		//
 		// first step, multiply the first n rows by '*q': vRe = [R -C] * (*q)

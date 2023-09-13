@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include <wx/string.h>
+#include <string>
 
 // debug defines
 //#define DEBUG_REGISTER_TYPELIB
@@ -45,7 +45,7 @@
 //#define DEBUG_DUMP_OTHER
 
 // define headless
-//#define FCG_HEADLESS
+#define FCG_HEADLESS
 
 // version and copyright header messages
 #define FCG_LIC_STD_HEADER1     "FasterCap License"
@@ -65,7 +65,7 @@
 #endif // !FCG_HEADLESS
 
 // Needed for CLin_Matrix
-#include "LinAlgebra/Mtx.h"
+#include "./Solver/LinAlgebra/Mtx.h"
 
 #define MAX_TITLE_LENGHT 64
 
@@ -80,25 +80,25 @@
 #ifndef FCG_HEADLESS
 // global, exported variables & functions
 
-class Globals {
-
-public:
-    inline static FasterCapApp *GetApp() {
-        return m_pApp;
-    }
-    inline static void SetApp(FasterCapApp *fca) {
-        m_pApp = fca;
-    }
-
-
-protected:
-    static FasterCapApp *m_pApp;
-};
+//class Globals {
+//
+//public:
+//    inline static FasterCapApp *GetApp() {
+//        return m_pApp;
+//    }
+//    inline static void SetApp(FasterCapApp *fca) {
+//        m_pApp = fca;
+//    }
+//
+//
+//protected:
+//    static FasterCapApp *m_pApp;
+//};
 
 // this function is used for system messages (console stdout or
 // GUI MessageBox according to 'FasterCapApp' being a pure console
 // or a GUI)
-void SysMsg(wxString message, wxString caption="Message", long style = wxOK|wxCENTRE);
+void SysMsg(std::string message, std::string caption="Message", long style = 0);
 
 #endif //FCG_HEADLESS
 

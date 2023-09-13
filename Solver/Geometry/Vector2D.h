@@ -263,7 +263,7 @@ public:
 
 		v2mod = v2.Mod();
 
-//		ASSERT(v2mod != 0.0);
+//		//ASSERT(v2mod != 0.0);
 
 		// compute cross product and normalize by v2mod
 		// (so only sen(alpha) * v1mod remains, which is the distance
@@ -381,7 +381,7 @@ public:
 		m_vecDir = v2 - v1;
 		mod = Mod(m_vecDir);
 		// if v1 and v2 are coincident (within tolerance) assert error
-//		ASSERT(mod > C3D_TOL);
+//		//ASSERT(mod > C3D_TOL);
 		// m_vecDir must always be normalized
 		m_vecDir /= mod;
 
@@ -460,7 +460,7 @@ inline C2DVector PointOnSegment(C2DVector &point_a, C2DVector &point_b, double t
 {
 	C2DVector point;
 
-//	ASSERT( t0>=0.0 && t0<=1.0 );
+//	//ASSERT( t0>=0.0 && t0<=1.0 );
 
 	point.x = (1-t0) * point_a.x + t0 * point_b.x;
 	point.y = (1-t0) * point_a.y + t0 * point_b.y;

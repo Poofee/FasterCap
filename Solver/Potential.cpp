@@ -34,7 +34,7 @@
 
 #include "Potential.h"
 
-#include "FasterCapGlobal.h"
+#include "../FasterCapGlobal.h"
 
 #define LOG_FOUR_PLUS_TWO   3.3862943611198906188344642429164
 
@@ -1880,7 +1880,7 @@ double CPotential::PotentialOpt(C2DVector r, C2DVector_float vertexes[2], bool d
 	// compute vector along the segment
 	segVector = vertexes[1] - vertexes[0];
 	segMod = Mod(segVector);
-	ASSERT(segMod != 0.0);
+	//ASSERT(segMod != 0.0);
 	// compute x unit vector
 	// optimized operation
 	//	n = n/Mod(n);
@@ -1982,7 +1982,7 @@ double CPotential::EnField(C2DVector r, C2DVector_float vertexes[2], C2DVector p
 	// compute vector along the segment
 	segVector = vertexes[1] - vertexes[0];
 	segMod = Mod(segVector);
-	ASSERT(segMod != 0.0);
+	//ASSERT(segMod != 0.0);
 	// compute x unit vector
 	// optimized operation
 	//	n = n/Mod(n);

@@ -153,7 +153,7 @@ public:
 		ly = fabs(vect.y);
 		lz = fabs(vect.z);
 
-		ASSERT(lx >= C3D_TOL || ly >= C3D_TOL || lz >= C3D_TOL);
+		////ASSERT(lx >= C3D_TOL || ly >= C3D_TOL || lz >= C3D_TOL);
 
 		if( lx >= ly )
 			if( lx >= lz ) {
@@ -196,7 +196,7 @@ public:
 	{
 		C3DVector point;
 
-		ASSERT( t0>=0.0 && t0<=1.0 );
+		////ASSERT( t0>=0.0 && t0<=1.0 );
 
 		point.x = (1-t0) * point_a.x + t0 * point_b.x;
 		point.y = (1-t0) * point_a.y + t0 * point_b.y;
@@ -399,9 +399,9 @@ public:
 		// only one loop with exactly three edges
 
 		looplist = &(face.loopList);
-		ASSERT(looplist->size() == 1);
+		//ASSERT(looplist->size() == 1);
 		edgeuselist = &( (*(looplist->begin()))->edgeUseList);
-		ASSERT(edgeuselist->size() == 3);
+		//ASSERT(edgeuselist->size() == 3);
 
 		if( plane.m_vecNormal == face.plane.m_vecNormal && fabs(plane.m_dD - face.plane.m_dD) < C3D_TOL ) {
 			return C3D_TRIANGLE_ON_PLANE;
@@ -426,7 +426,7 @@ public:
 		}
 
 		// verify that only zero, one or two points have been identified
-		ASSERT(pointindex >= 0 && pointindex <= 2);
+		//ASSERT(pointindex >= 0 && pointindex <= 2);
 
 		// if two points have been identified,verify that they are not
 		// coincident (within tolerance). This could happen if the plane
@@ -526,14 +526,14 @@ public:
 		// only one loop with exactly three edges
 
 		looplist1 = &(tri1.loopList);
-		ASSERT(looplist1->size() == 1);
+		//ASSERT(looplist1->size() == 1);
 		edgeuselist1 = &( (*(looplist1->begin()))->edgeUseList);
-		ASSERT(edgeuselist1->size() == 3);
+		//ASSERT(edgeuselist1->size() == 3);
 
 		looplist2 = &(tri2.loopList);
-		ASSERT(looplist2->size() == 1);
+		//ASSERT(looplist2->size() == 1);
 		edgeuselist2 = &( (*(looplist2->begin()))->edgeUseList);
-		ASSERT(edgeuselist2->size() == 3);
+		//ASSERT(edgeuselist2->size() == 3);
 
 		// intersect triangles with each other's plane
 		isect[0].isectPtsNum = IntersTrianglePlane(tri1.plane, tri2, isect[0].isectPt);
@@ -558,10 +558,10 @@ public:
 		for(i=0; i<2; i++) {
 			res = PointAbscissaOnLine(isectLine, isect[0].isectPt[i], isect[0].isectAbscissa[i]);
 			// point must be on the intersection line; if not, error!
-			ASSERT( res == C3D_OK);
+			//ASSERT( res == C3D_OK);
 			res = PointAbscissaOnLine(isectLine, isect[1].isectPt[i], isect[1].isectAbscissa[i]);
 			// point must be on the intersection line; if not, error!
-			ASSERT( res == C3D_OK);
+			//ASSERT( res == C3D_OK);
 		}
 
 		// order intersection segment endpoints
@@ -719,7 +719,7 @@ public:
 		return C3D_OK;
 	}
 
-/*
+
 	// Compute plane of a polygon, using Newell's method (see e.g. graphics gems III, V.5)
 	// Plane normal direction is so that N x point1-point3
 	// is directed inside the polygon
@@ -735,72 +735,72 @@ public:
 	//
 	// If plane equation can be found, return C3D_OK and plane 'plane',
 	// otherwise return error condition
-	int PlaneFromPolygon(C3DPlane &plane, double &mod, C3DList<C3DEdgeUse*> &edgeuses)
-	{
-		C3DList<C3DEdgeUse*>::iterator it;
-		C3DVector normal, midpoint, point1, point2;
-		int pointnum;
+	//int PlaneFromPolygon(C3DPlane &plane, double &mod, C3DList<C3DEdgeUse*> &edgeuses)
+	//{
+	//	C3DList<C3DEdgeUse*>::iterator it;
+	//	C3DVector normal, midpoint, point1, point2;
+	//	int pointnum;
 
-		pointnum = 0;
+	//	pointnum = 0;
 
-		// scan all points
-		for(it = edgeuses.begin(); it != edgeuses.end(); it++) {
+	//	// scan all points
+	//	for(it = edgeuses.begin(); it != edgeuses.end(); it++) {
 
-			// get edge vertexes coordinates;
-			// note that edgeuse direction is important!
-			point1 = (*it)->GetFirstVertexUse()->pVertex->pos;
-			point2 = (*it)->GetSecondVertexUse()->pVertex->pos;
+	//		// get edge vertexes coordinates;
+	//		// note that edgeuse direction is important!
+	//		point1 = (*it)->GetFirstVertexUse()->pVertex->pos;
+	//		point2 = (*it)->GetSecondVertexUse()->pVertex->pos;
 
-			// calculate components of normal vector, using the
-			// fact that the area of the trapezoids projected on the
-			// xy, xz, yz planes is proportional to the z, y, x
-			// components of the normal
-			normal.x += (point1.y - point2.y) * (point1.z + point2.z);
-			normal.y += (point1.z - point2.z) * (point1.x + point2.x);
-			normal.z += (point1.x - point2.x) * (point1.y + point2.y);
-			// remark: the above is the original Newell's method. However, notice
-			// that for next edge, the old point2 becomes the new point 1
-			// therefore, developing the multiplication, we have (for instance on normal.z),
-			// and considering three points 1, 2, 3:
-			// first step:
-			// normal.z += point1.x*point1.y - point1.x*point2.y - point2.x*point1.y - point2.x*point2.y
-			// next step:
-			// normal.z += point2.x*point2.y - point2.x*point3.y - point3.x*point2.y - point3.x*point3.y
-			// so the third member of the first equation simplifies with the first member of the second
-			// (always point2.x*point2.y) so we save two multiplications.
-			// This is by the way how the Stone's method (see Graphics Gems II, I.1) in 2D works to
-			// calculate the area of a polygon (remark: we should divide by two if we wanted to get the real area)
-			// Remark: numerically, the above method appears more stable!! Using the below shortcut leads
-			// to slight differences in the normal calculation, that in the end let the point on triangle
-			// test fail!!
-			//normal.x += point1.y*point2.z - point1.z*point2.y;
-			//normal.y += point1.z*point2.x - point2.z*point1.x;
-			//normal.z += point1.x*point2.y - point2.x*point1.y;
+	//		// calculate components of normal vector, using the
+	//		// fact that the area of the trapezoids projected on the
+	//		// xy, xz, yz planes is proportional to the z, y, x
+	//		// components of the normal
+	//		normal.x += (point1.y - point2.y) * (point1.z + point2.z);
+	//		normal.y += (point1.z - point2.z) * (point1.x + point2.x);
+	//		normal.z += (point1.x - point2.x) * (point1.y + point2.y);
+	//		// remark: the above is the original Newell's method. However, notice
+	//		// that for next edge, the old point2 becomes the new point 1
+	//		// therefore, developing the multiplication, we have (for instance on normal.z),
+	//		// and considering three points 1, 2, 3:
+	//		// first step:
+	//		// normal.z += point1.x*point1.y - point1.x*point2.y - point2.x*point1.y - point2.x*point2.y
+	//		// next step:
+	//		// normal.z += point2.x*point2.y - point2.x*point3.y - point3.x*point2.y - point3.x*point3.y
+	//		// so the third member of the first equation simplifies with the first member of the second
+	//		// (always point2.x*point2.y) so we save two multiplications.
+	//		// This is by the way how the Stone's method (see Graphics Gems II, I.1) in 2D works to
+	//		// calculate the area of a polygon (remark: we should divide by two if we wanted to get the real area)
+	//		// Remark: numerically, the above method appears more stable!! Using the below shortcut leads
+	//		// to slight differences in the normal calculation, that in the end let the point on triangle
+	//		// test fail!!
+	//		//normal.x += point1.y*point2.z - point1.z*point2.y;
+	//		//normal.y += point1.z*point2.x - point2.z*point1.x;
+	//		//normal.z += point1.x*point2.y - point2.x*point1.y;
 
-			// calculates the mean point of the polygon
-			midpoint += point1;
-			pointnum++;
-		}
+	//		// calculates the mean point of the polygon
+	//		midpoint += point1;
+	//		pointnum++;
+	//	}
 
-		mod = Mod(normal);
+	//	mod = Mod(normal);
 
-		// if the result of the cross product is too small,
-		// can only means that the points are almost collinear
-		if( mod < m_dTol ) {
-			return C3D_POINTS_ARE_COLLINEAR;
-		}
+	//	// if the result of the cross product is too small,
+	//	// can only means that the points are almost collinear
+	//	if( mod < m_dTol ) {
+	//		return C3D_POINTS_ARE_COLLINEAR;
+	//	}
 
-		// unify normal vector
-		normal = normal / mod;
+	//	// unify normal vector
+	//	normal = normal / mod;
 
-		// compute mean point
-		midpoint /= pointnum;
+	//	// compute mean point
+	//	midpoint /= pointnum;
 
-		plane.m_vecNormal = normal;
-		plane.m_dD = DotProd(normal, midpoint);
+	//	plane.m_vecNormal = normal;
+	//	plane.m_dD = DotProd(normal, midpoint);
 
-		return C3D_OK;
-	}
+	//	return C3D_OK;
+	//}
 
 	// Find the quadrant in which given point lies w.r.t. the axis origin
 	// If the point is on the cartesian axes, signal it with flag
@@ -893,7 +893,7 @@ public:
 			return RotatePointZ(point);
 		else {
 			// always error
-			ASSERT(NULL);
+			//ASSERT(NULL);
 			// return dummy vector
 			return v;
 		}
@@ -1039,7 +1039,7 @@ public:
 								C3DLine &line1, C3DLine &line2);
 	void IntersectTriangFaces(C3DFace &face1, C3DFace &face2);
 	char IsPointInFace(C3DVector &point, C3DFace *face);
-*/
+
 protected:
 	double    m_dTol;
 	C3DVector m_vecTol;
@@ -1135,7 +1135,7 @@ protected:
 		//
 
 		// face cannot be empty
-		ASSERT(pFace->loopList.size() > 0);
+		//ASSERT(pFace->loopList.size() > 0);
 
 		itl = pFace->loopList.begin();
 
@@ -1148,7 +1148,7 @@ protected:
 		}
 		else
 			// loop cannot be empty
-			ASSERT(false);
+			//ASSERT(false);
 
 		minMax.first = point[dir];
 		minMax.second = point[dir];

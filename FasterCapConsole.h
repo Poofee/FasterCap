@@ -36,7 +36,7 @@ class FasterCapConsole
 #else
         int main(int& argc, wxChar **argv, char bOption='\0');
 #endif // FCG_HEADLESS        int main(int& argc, wxChar **argv, char bOption = '\0');
-        bool ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &globalVars, wxString &errMsg);
+        bool ParseCmdLine(const char *commandStr, CAutoRefGlobalVars &globalVars, std::string &errMsg);
 
     protected:
         int getSubstring(const char *buffer, char *substr, int *skip);

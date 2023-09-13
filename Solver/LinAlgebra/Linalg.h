@@ -31,12 +31,12 @@
 #include <cassert>
 #include <iostream>
 
-#ifdef MS_VS
-#include <crtdbg.h>
-#else
-#  include <wx/debug.h>
-#  define _ASSERT wxASSERT
-#endif
+//#ifdef MS_VS
+//#include <crtdbg.h>
+//#else
+//#  include <wx/debug.h>
+//#  define _ASSERT wxASSERT
+//#endif
 
 #define LINALG_MAJOR_VERSION    '0'
 #define LINALG_MINOR_VERSION    '1'

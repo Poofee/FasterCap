@@ -46,13 +46,13 @@
 #define C3D_MINIMUM_ANGLE	20.0
 
 // for multiplatform wxWidgets
-#ifndef MS_VS
-// for wxASSERT
-#  include <wx/debug.h>
-// when not using MS VisualC++
-#  define ASSERT wxASSERT
-#  define FALSE 0
-#endif
+//#ifndef MS_VS
+//// for wxASSERT
+//#  include <wx/debug.h>
+//// when not using MS VisualC++
+//#  define ASSERT wxASSERT
+//#  define FALSE 0
+//#endif
 
 #endif // GEOGLOBAL_DEFS
 

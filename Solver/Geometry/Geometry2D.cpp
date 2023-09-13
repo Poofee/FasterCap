@@ -25,7 +25,7 @@
 // Geometry2D.cpp : implementation of the geometry-related classes
 // Enrico Di Lorenzo 2003/07/25
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "Geometry2D.h"
 

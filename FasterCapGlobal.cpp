@@ -100,7 +100,7 @@ void SysMsg(wxString message, wxString caption, long style)
 
 int LogMsg(const char *fmt,...)
 {
-	wxString msg;
+	std::string msg;
 	int ret;
 	va_list arg_ptr;
 	char buf[FCM_LOG_BUF_SIZE];
@@ -128,7 +128,7 @@ int LogMsg(const char *fmt,...)
 
 	// if PrintfV() returns error
 	if(ret < 0) {
-		msg = wxT("Error: LogMsg() is not able to print the message\n");
+		msg = ("Error: LogMsg() is not able to print the message\n");
 	}
 
 	std::cout << msg;
@@ -138,7 +138,7 @@ int LogMsg(const char *fmt,...)
 
 int ErrMsg(const char *fmt,...)
 {
-	wxString msg;
+	std::string msg;
 	int ret;
 	va_list arg_ptr;
 	char buf[FCM_LOG_BUF_SIZE];
@@ -151,7 +151,7 @@ int ErrMsg(const char *fmt,...)
 
 	// if PrintfV() returns error
 	if(ret < 0) {
-		msg = wxT("Error: ErrMsg() is not able to print the message\n");
+		msg = ("Error: ErrMsg() is not able to print the message\n");
 	}
 
 	std::cout << msg;

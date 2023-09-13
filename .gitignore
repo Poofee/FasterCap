@@ -1,0 +1,9 @@
+*.ipch
+*.vsidx
+*.lock
+*.obj
+*.ipdb
+*.pdb
+*.iobj
+*.tlog
+*.log

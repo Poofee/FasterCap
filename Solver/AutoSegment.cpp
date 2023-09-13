@@ -79,7 +79,7 @@ void CAutoSegment::MakeSuperSegment(CAutoSegment *leftSubPanel, CAutoSegment *ri
 	        ((rightSubPanel->m_ucType & AUTOPANEL_IS_DIEL) != AUTOPANEL_IS_DIEL &&
 	         (leftSubPanel->m_ucType & AUTOPANEL_IS_DIEL) == AUTOPANEL_IS_DIEL) ) {
 
-		ASSERT(true);
+		//ASSERT(true);
 		ErrMsg("Internal error: dielectric subpanels %x, %x not coherent in type\n",
 		       rightSubPanel, leftSubPanel);
 	}

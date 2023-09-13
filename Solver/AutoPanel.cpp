@@ -95,7 +95,7 @@ double CAutoPanel::CalcPanelGeomPar()
 		c = 0;
 	}
 	// calculate cos(min angle) using cosine rule (angles are opposite to correspondent sides)
-	//  b² = a² + c² -  2ac cosB
+	//  b?= a?+ c?-  2ac cosB
 	// for reference, there is also sine rule (not used here):
 	// a / sin(A) = b / sin(B) = c / sin(C)
 	cosmin = (sidelen[a]*sidelen[a] + sidelen[c]*sidelen[c] - sidelen[b]*sidelen[b]) / (2.0 * sidelen[a] * sidelen[c]);
@@ -217,7 +217,7 @@ void CAutoPanel::MakeSuperPanel(CAutoPanel *leftSubPanel, CAutoPanel *rightSubPa
 	        ((rightSubPanel->m_ucType & AUTOPANEL_IS_DIEL) != AUTOPANEL_IS_DIEL &&
 	         (leftSubPanel->m_ucType & AUTOPANEL_IS_DIEL) == AUTOPANEL_IS_DIEL) ) {
 
-		ASSERT(true);
+		//ASSERT(true);
 		ErrMsg("Internal error: dielectric subpanels %x, %x not coherent in type\n",
 		       rightSubPanel, leftSubPanel);
 	}
@@ -614,7 +614,7 @@ double CAutoQPanel::CalculateNormal(C3DVector_float &normal)
 	// using Newell's method (see e.g. graphics gems III, V.5)
 	// Plane normal direction is so that N x point1-point3
 	// is directed inside the polygon.
-	// For nonplanar polygons, Newell’s method computes a “best-fit” normal
+	// For nonplanar polygons, Newell’s method computes a “best-fit?normal
 	//
 	//         3                    O
 	//         |\                   O

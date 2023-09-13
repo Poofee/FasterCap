@@ -25,81 +25,81 @@
 #ifndef FASTERCAPAPP_H
 #define FASTERCAPAPP_H
 
-#include <wx/app.h>
-#include "FasterCapMain.h"
-
-// generic help system
-#include <wx/html/helpctrl.h>
-// MS help system
-#if wxUSE_MS_HTML_HELP
-#   include <wx/msw/helpchm.h>
-#endif
-#include <wx/apptrait.h>
-
-// This class is used in conjunction with FasterCapApp to enable
-// a pure console mode.
-// The new AppTraits is needed to be sure that the log target is the console
-// and not the wxLogGui
-class MixAppTraits : public wxGUIAppTraits
-{
-    public:
-        MixAppTraits(bool is_console);
-        wxLog *CreateLogTarget();
-
-    protected:
-        bool m_bIsConsole;
-};
-
-// FasterCapApp enables also a pure console mode that can be used
-// GUI-less without even
-// initializing any GUI related stuff, so it can be used in
-// a remote console without exported DISPLAY in Linux
-// This is not an issue in Win as in this case the console
-// is always opened at start-up and the windows created only
-// on demand.
-// Similar to what shown at
-// http://compgroups.net/comp.soft-sys.wxwindows/hybrid-gui-console-app/2686190
-class FasterCapApp : public wxApp
-{
-    public:
-        inline FasterCapFrame *GetFasterCapFrame() {
-            return m_pFasterCapFrame;
-        }
-        void DisplayHelp();
-        bool IsFirstUse();
-        void SetNotFirstUse();
-        wxString GetBasePath();
-        wxString GetSamplePath();
-        wxString GetLicenseTextPath();
-
-        int m_iRetStatus;
-
-protected:
-        // overrides
-        bool Initialize(int& argc, wxChar **argv);
-        void CleanUp();
-        MixAppTraits *CreateTraits();
-        // virtuals
-        virtual bool OnInit();
-        virtual int OnRun();
-//        virtual void OnIdle(wxIdleEvent& event);
-        virtual int OnExit();
-
-        FasterCapFrame *m_pFasterCapFrame;
-        long m_lIsFirstUse;
-        wxString m_strBasePath;
-        wxString m_strFasterCapPath;
-        wxString m_strSamplePath;
-        wxString m_strLicenseTextPath;
-#if wxUSE_MS_HTML_HELP
-        // MS help support
-        wxCHMHelpController *m_pHelp;
-#else
-        // generic help support
-        wxHtmlHelpController *m_pHelp;
-#endif
-        bool m_bIsHelp;
-
-//        DECLARE_EVENT_TABLE()
-};
+////#include <wx/app.h>
+//#include "FasterCapMain.h"
+//
+//// generic help system
+////#include <wx/html/helpctrl.h>
+//// MS help system
+////#if wxUSE_MS_HTML_HELP
+////#   include <wx/msw/helpchm.h>
+////#endif
+////#include <wx/apptrait.h>
+//
+//// This class is used in conjunction with FasterCapApp to enable
+//// a pure console mode.
+//// The new AppTraits is needed to be sure that the log target is the console
+//// and not the wxLogGui
+//class MixAppTraits : public wxGUIAppTraits
+//{
+//    public:
+//        MixAppTraits(bool is_console);
+//        wxLog *CreateLogTarget();
+//
+//    protected:
+//        bool m_bIsConsole;
+//};
+//
+//// FasterCapApp enables also a pure console mode that can be used
+//// GUI-less without even
+//// initializing any GUI related stuff, so it can be used in
+//// a remote console without exported DISPLAY in Linux
+//// This is not an issue in Win as in this case the console
+//// is always opened at start-up and the windows created only
+//// on demand.
+//// Similar to what shown at
+//// http://compgroups.net/comp.soft-sys.wxwindows/hybrid-gui-console-app/2686190
+//class FasterCapApp : public wxApp
+//{
+//    public:
+//        inline FasterCapFrame *GetFasterCapFrame() {
+//            return m_pFasterCapFrame;
+//        }
+//        void DisplayHelp();
+//        bool IsFirstUse();
+//        void SetNotFirstUse();
+//        wxString GetBasePath();
+//        wxString GetSamplePath();
+//        wxString GetLicenseTextPath();
+//
+//        int m_iRetStatus;
+//
+//protected:
+//        // overrides
+//        bool Initialize(int& argc, wxChar **argv);
+//        void CleanUp();
+//        MixAppTraits *CreateTraits();
+//        // virtuals
+//        virtual bool OnInit();
+//        virtual int OnRun();
+////        virtual void OnIdle(wxIdleEvent& event);
+//        virtual int OnExit();
+//
+//        FasterCapFrame *m_pFasterCapFrame;
+//        long m_lIsFirstUse;
+//        wxString m_strBasePath;
+//        wxString m_strFasterCapPath;
+//        wxString m_strSamplePath;
+//        wxString m_strLicenseTextPath;
+//#if wxUSE_MS_HTML_HELP
+//        // MS help support
+//        wxCHMHelpController *m_pHelp;
+//#else
+//        // generic help support
+//        wxHtmlHelpController *m_pHelp;
+//#endif
+//        bool m_bIsHelp;
+//
+////        DECLARE_EVENT_TABLE()
+//};
 #endif // FASTERCAPAPP_H

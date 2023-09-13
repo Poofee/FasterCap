@@ -737,13 +737,13 @@ int CSolveCap::OutputCapMtx(const CLin_Matrix &matrixRe, const CLin_Matrix &matr
 	N = matrixRe.num_cols();
 
 	// verify that matrix dimension is the same for the real and imaginary parts
-	ASSERT(M == matrixIm.num_rows());
-	ASSERT(N == matrixIm.num_cols());
+	//ASSERT(M == matrixIm.num_rows());
+	//ASSERT(N == matrixIm.num_cols());
 
 	// if 2D solver, remove last row and column, unless verbose
 	if(g_ucSolverType == SOLVERGLOBAL_2DSOLVER) {
 		// verify that matrix dimension is compatible with the size of the conductor names array
-		ASSERT(M == stringList.size()-1);
+		//ASSERT(M == stringList.size()-1);
 		if(globalVars.m_bVerboseOutput == false) {
 			if(N>1) {
 				N--;
@@ -755,7 +755,7 @@ int CSolveCap::OutputCapMtx(const CLin_Matrix &matrixRe, const CLin_Matrix &matr
 	}
 	else {
 		// verify that matrix dimension is compatible with the size of the conductor names array
-		ASSERT(M == stringList.size());
+		//ASSERT(M == stringList.size());
 	}
 
 	ret = LogMsg("Dimension %d x %d\n", M, N);
@@ -844,8 +844,8 @@ int CSolveCap::OutputCapMtxToFile(const CLin_Matrix &matrixRe, const CLin_Matrix
     N = matrixRe.num_cols();
 
     // verify that matrix dimension is the same for the real and imaginary parts
-    ASSERT(M == matrixIm.num_rows());
-    ASSERT(N == matrixIm.num_cols());
+    //ASSERT(M == matrixIm.num_rows());
+    //ASSERT(N == matrixIm.num_cols());
 
     // if 2D solver, remove last row and column
     if(g_ucSolverType == SOLVERGLOBAL_2DSOLVER) {
@@ -1248,7 +1248,7 @@ int CSolveCap::Solve(CLin_Matrix *cRe, CLin_Matrix *cIm)
 				}
 			}
 			else {
-				ASSERT(false);
+				//ASSERT(false);
 			}
 
 			// solve for charge
@@ -2071,7 +2071,7 @@ void CSolveCap::ComputeBlockPrecond()
 	int isPotValid;
 	double potestim1, potestim2;
 
-	ASSERT(m_uiBlockPreNum <= m_clsGlobalVars.m_uiBlockPreSize);
+	//ASSERT(m_uiBlockPreNum <= m_clsGlobalVars.m_uiBlockPreSize);
 
 	for(i=0; i < m_uiBlockPreNum; i++) {
 		for(j = i; j < m_uiBlockPreNum; j++) {
@@ -2160,7 +2160,7 @@ void CSolveCap::InvertMatrix(double (*matrix)[SOLVE_MAX_SUPER_PRECOND_NUM], doub
 
 		// factorization failed because of zero pivot
 		// TBC warning: maybe should add a real warning?
-		ASSERT( matrix[jp][j] != 0 );
+		//ASSERT( matrix[jp][j] != 0 );
 
 		// if pivot not already on the diagonal
 		if (jp != j) {
@@ -2296,7 +2296,7 @@ int CSolveCap::gmresPrecondSFastAll(CLin_Vector *b, CLin_Vector *x, double gmres
 	// get system size
 	size = b->size();
 	// check consistency of size
-	ASSERT(size == (long)(*x).size());
+	//ASSERT(size == (long)(*x).size());
 
 	// if there is a preconditioner
 	if(m_clsGlobalVars.m_ucPrecondType != AUTOREFINE_PRECOND_NONE) {
@@ -2379,7 +2379,7 @@ int CSolveCap::gmresPrecondSFastAll(CLin_Vector *b, CLin_Vector *x, double gmres
 		// allocate only if not already pre-allocated
 		if((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_0_LEVEL] < i) {
 
-			ASSERT((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_0_LEVEL] == i-1);
+			//ASSERT((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_0_LEVEL] == i-1);
 
 			// allocate new column of h
 			// (remark: since vectors are 0-based, must
@@ -2609,7 +2609,7 @@ int CSolveCap::gmresPrecondSFastAllUpper(CLin_Vector *b, CLin_Vector *x, double 
 	// get system size
 	size = b->size();
 	// check consistency of size
-//	ASSERT(size == *x.size());
+//	//ASSERT(size == *x.size());
 
 	// if there is a preconditioner
 	if(precondType != AUTOREFINE_PRECOND_NONE) {
@@ -2694,7 +2694,7 @@ int CSolveCap::gmresPrecondSFastAllUpper(CLin_Vector *b, CLin_Vector *x, double 
 		// allocate only if not already pre-allocated
 		if((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_1_LEVEL] < i) {
 
-			ASSERT((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_1_LEVEL] == i-1);
+			//ASSERT((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_1_LEVEL] == i-1);
 
 			// allocate new column of h
 			// (remark: since vectors are 0-based, must
@@ -2914,7 +2914,7 @@ int CSolveCap::gmresFlexPrecondSFastAll(CLin_Vector *b, CLin_Vector *x, double g
 	// get system size
 	size = b->size();
 	// check consistency of size
-//	ASSERT(size == *x.size());
+//	//ASSERT(size == *x.size());
 
 	// if there is a preconditioner
 	if(m_clsGlobalVars.m_ucPrecondType != AUTOREFINE_PRECOND_NONE) {
@@ -2991,7 +2991,7 @@ int CSolveCap::gmresFlexPrecondSFastAll(CLin_Vector *b, CLin_Vector *x, double g
 		// allocate only if not already pre-allocated
 		if((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_0_LEVEL] < i) {
 
-			ASSERT((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_0_LEVEL] == i-1);
+			//ASSERT((long)m_uiGmresPrealloc[AUTOREFINE_HIER_PRE_0_LEVEL] == i-1);
 
 			// allocate new column of h
 			// (remark: since vectors are 0-based, must
@@ -3225,7 +3225,7 @@ int CSolveCap::gmresPrecondSFastAllX0(CLin_Vector *b, CLin_Vector *x, CLin_Vecto
 	// get system size
 	size = b->size();
 	// check consistency of size
-//	ASSERT(size == *x.size());
+//	//ASSERT(size == *x.size());
 
 	// r = b - A * x0;
 	// matrix - vector multiplication
@@ -3499,9 +3499,9 @@ void CSolveCap::ComputePrecondVectFast(CLin_Vector *Pq, CLin_Vector *q, unsigned
 			for(i=0; i<(long)(*Pq).size(); i++) {
 				// dividing for the 'm_clsSelfPotCoeff' is multiplying for the Jacobi precond
 				(*Pq)[i] = (*q)[i] / m_clsMulthier.m_clsSelfPotCoeff[i];
-				ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) < 1E20);
-				ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) != 0.0);
-				ASSERT(fabs((*Pq)[i]) < 1E20);
+				//ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) < 1E20);
+				//ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) != 0.0);
+				//ASSERT(fabs((*Pq)[i]) < 1E20);
 			}
 		}
 		else {
@@ -3513,14 +3513,14 @@ void CSolveCap::ComputePrecondVectFast(CLin_Vector *Pq, CLin_Vector *q, unsigned
 			for(i=0; i<(long)(*Pq).size()/2; i++) {
 				// dividing for the 'm_clsSelfPotCoeff' is multiplying for the Jacobi precond
 				(*Pq)[i] = (*q)[i] / m_clsMulthier.m_clsSelfPotCoeff[i];
-				ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) < 1E20);
-				ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) != 0.0);
-				ASSERT(fabs((*Pq)[i]) < 1E20);
+				//ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) < 1E20);
+				//ASSERT(fabs(m_clsMulthier.m_clsSelfPotCoeff[i]) != 0.0);
+				//ASSERT(fabs((*Pq)[i]) < 1E20);
 			}
 			for(i=0, j=(long)(*Pq).size()/2; i<(long)(*Pq).size()/2; i++, j++) {
 				// dividing for the 'm_clsSelfPotCoeff' is multiplying for the Jacobi precond
 				(*Pq)[j] = (*q)[j] / m_clsMulthier.m_clsSelfPotCoeff[i];
-				ASSERT(fabs((*Pq)[j]) < 1E20);
+				//ASSERT(fabs((*Pq)[j]) < 1E20);
 			}
 		}
 	}
@@ -3702,7 +3702,7 @@ void CSolveCap::DebugDumpPotMtxAndIndex()
 
 	fp = fopen("pot_mat_index.txt", "w");
 
-	ASSERT(fp != NULL);
+	//ASSERT(fp != NULL);
 
 	// scan every conductor to mark the panels belonging to each conductor
 	condindex = 1;
@@ -3759,7 +3759,7 @@ void CSolveCap::DebugDumpPotMtx()
 
 	fp = fopen("pot_mat.txt", "w");
 
-	ASSERT(fp != NULL);
+	//ASSERT(fp != NULL);
 
 	// to dump pot matrix, we find each column of A
 	// by multiplying by c vectors with all zeros
@@ -3840,7 +3840,7 @@ void CSolveCap::DebugDumpPrecondMtx()
 
 	fp = fopen("precond_mat.txt", "w");
 
-	ASSERT(fp != NULL);
+	//ASSERT(fp != NULL);
 
 	// to dump pot matrix, we find each column of A
 	// by multiplying by c vectors with all zeros
@@ -3897,7 +3897,7 @@ void CSolveCap::DebugDumpUncomprPotMtx()
 
 		fp = fopen("pot_mat_unc.txt", "w");
 
-		ASSERT(fp != NULL);
+		//ASSERT(fp != NULL);
 
 		// to dump pot matrix, we find each column of A
 		// by multiplying by c vectors with all zeros
@@ -3920,7 +3920,7 @@ void CSolveCap::DebugDumpUncomprPotMtx()
 				}
 
 				if(isPotValid != 0) {
-					ASSERT(0);
+					//ASSERT(0);
 				}
 
 				// once every 20 values, split row
@@ -3949,7 +3949,7 @@ void CSolveCap::DebugDumpUncomprPotMtx()
 
 		fp = fopen("pot_mat_unc.txt", "w");
 
-		ASSERT(fp != NULL);
+		//ASSERT(fp != NULL);
 
 		// to dump pot matrix, we find each column of A
 		// by multiplying by c vectors with all zeros
@@ -3972,7 +3972,7 @@ void CSolveCap::DebugDumpUncomprPotMtx()
 				}
 
 				if(isPotValid != 0) {
-					ASSERT(0);
+					//ASSERT(0);
 				}
 
 				// once every 20 values, split row

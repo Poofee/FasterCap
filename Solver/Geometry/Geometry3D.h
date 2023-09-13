@@ -441,7 +441,7 @@ public:
 
 		it = pVertex->vertexUseList.find(this);
 		// the vertexuse must be in vertexuse list
-		ASSERT(*it != NULL);
+		//ASSERT(*it != NULL);
 		pVertex->vertexUseList.pop(it);
 
 		// remove vertex from BSP tree and delete it,
@@ -569,7 +569,7 @@ protected:
 				init(ppoint);
 			// otherwise, *it must be != NULL
 			else {
-				ASSERT(*it);
+				//ASSERT(*it);
 				insert(it.currentNode, ppoint);
 			}
 		}
@@ -602,7 +602,7 @@ protected:
 
 			// if father is NULL, this should be the root
 			if(father == NULL) {
-				ASSERT(thischild == root);
+				//ASSERT(thischild == root);
 				// delete the only node in the tree
 				delete root;
 				// and set root to NULL, so everybody knows
@@ -618,8 +618,8 @@ protected:
 			else
 				otherchild = father->left;
 
-			ASSERT(thischild);
-			ASSERT(otherchild);
+			//ASSERT(thischild);
+			//ASSERT(otherchild);
 
 			// Copy from other child to father, according to otherchild's
 			// childness status.
@@ -687,8 +687,8 @@ public:
 	~C3DEdge()
 	{
 		// must exist!
-		ASSERT(pVertexUse1);
-		ASSERT(pVertexUse2);
+		//ASSERT(pVertexUse1);
+		//ASSERT(pVertexUse2);
 
 		delete pVertexUse1;
 		delete pVertexUse2;
@@ -779,7 +779,7 @@ public:
 
 		it = pEdge->edgeUseList.find(this);
 		// the edgeuse must be in vertexuse list
-		ASSERT(*it != NULL);
+		//ASSERT(*it != NULL);
 		pEdge->edgeUseList.pop(it);
 
 		// delete edge, if this was its last edgeuse
@@ -976,7 +976,7 @@ public:
 	C3DShell() : C3DEntity(C3D_SHELL_ID), pShell(NULL), pVertexUse(NULL) {}
 	C3DShell(C3DShell *pFather) : C3DEntity(C3D_SHELL_ID), pShell(pFather), pVertexUse(NULL)
 	{
-		ASSERT(pShell != NULL);
+		//ASSERT(pShell != NULL);
 		// add new subshell to parent shell's shell list
 		pShell->shellList.push_front(this);
 	}
@@ -1029,7 +1029,7 @@ public:
 
 	void SetFather(C3DShell *father)
 	{
-		ASSERT(father != NULL);
+		//ASSERT(father != NULL);
 		pShell = father;
 		father->shellList.push_back(this);
 	}

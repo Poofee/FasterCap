@@ -25,7 +25,7 @@
 // Triangulate.cpp : implementation of Delaunay triangulation routines
 // Enrico Di Lorenzo 2003/05/05
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 // for binary_function
 #include <functional>
@@ -243,7 +243,7 @@ void C2DTriangulate::Triangulate()
 	C2DEdge *right_cw, *left_ccw;
 
 	// verify that the list contains at least 3 points
-	ASSERT(vertexes.size() > 2);
+	//ASSERT(vertexes.size() > 2);
 
 	// clear the current mesh
 	ClearMesh();
@@ -354,7 +354,7 @@ void C2DTriangulate::GenerateTriangles()
 		} while(edge != firstedge);
 	}
 
-	ASSERT(trinum <= triangles.size());
+	//ASSERT(trinum <= triangles.size());
 
 	// resize triangle list to actual length
 	triangles.resize(trinum);
@@ -378,7 +378,7 @@ void C2DTriangulate::ConstrainBoundary(C2DEdge *boundaryedge)
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 	}
 }
 
@@ -437,7 +437,7 @@ void C2DTriangulate::DivideAndMerge(long left, long right, C2DEdge **right_cw, C
 		}
 		else {
 			// this should never happen
-			ASSERT(FALSE);
+			//ASSERT(FALSE);
 		}
 	}
 	// more than 3 points, divide again, triangulating both
@@ -523,7 +523,7 @@ void C2DTriangulate::FindLowestTangent(C2DEdge *right_cw_left, C2DEdge *left_ccw
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 	}
 
 	*lowest_left = r_cw_l;
@@ -601,7 +601,7 @@ C2DEdge *C2DTriangulate::Merge(C2DEdge *right_cw_left, C2DEdge *left_ccw_right)
 
 		// if max loop limit has been broken, assert
 		if( i >= C2D_MAX_LOOP) {
-			ASSERT(FALSE);
+			//ASSERT(FALSE);
 		}
 
 		//
@@ -647,7 +647,7 @@ C2DEdge *C2DTriangulate::Merge(C2DEdge *right_cw_left, C2DEdge *left_ccw_right)
 
 		// if max loop limit has been broken, assert
 		if( i >= C2D_MAX_LOOP) {
-			ASSERT(FALSE);
+			//ASSERT(FALSE);
 		}
 
 		// now must choose between the two candidates
@@ -720,7 +720,7 @@ bool C2DTriangulate::InsertConstrEdge(C2DVector p1, C2DVector p2)
 
 	res = InsertConstrEdge(a,b);
 	// a,b must always exist!
-	ASSERT(res == true);
+	//ASSERT(res == true);
 
 	return true;
 }
@@ -800,7 +800,7 @@ bool C2DTriangulate::InsertConstrEdge(long a, long b)
 
 				halfplane = lineab.HalfPlane(*MateVertex(edgea));
 				// if coincident with line origin, this is an internal error
-				ASSERT(halfplane != C2D_ON_ORIGIN);
+				//ASSERT(halfplane != C2D_ON_ORIGIN);
 				if( halfplane == C2D_POS_HALFPLANE) {
 
 					// if so, we have already found a piece of the
@@ -818,7 +818,7 @@ bool C2DTriangulate::InsertConstrEdge(long a, long b)
 
 				halfplane = lineab.HalfPlane(*MateVertex(edgea->Onext()));
 				// if coincident with line origin, this is an internal error
-				ASSERT(halfplane != C2D_ON_ORIGIN);
+				//ASSERT(halfplane != C2D_ON_ORIGIN);
 				if( halfplane == C2D_POS_HALFPLANE) {
 
 					// if so, we have already found a piece of the
@@ -848,7 +848,7 @@ bool C2DTriangulate::InsertConstrEdge(long a, long b)
 
 		// if max loop limit has been broken, assert
 		if( j >= C2D_MAX_LOOP) {
-			ASSERT(FALSE);
+			//ASSERT(FALSE);
 		}
 
 		// if edgea is aligned with segment (a,b), simply constrain
@@ -907,7 +907,7 @@ bool C2DTriangulate::InsertConstrEdge(long a, long b)
 				else {
 					// intersect edges
 					res = IntersSegmentLine(point, *Vertex(walkinglnext), *MateVertex(walkinglnext), lineab);
-					ASSERT(res != C2D_SEGMENT_DONT_INTERSECT);
+					//ASSERT(res != C2D_SEGMENT_DONT_INTERSECT);
 
 					// split crossing constrained edge, inserting a new vertex
 					// at point position
@@ -927,14 +927,14 @@ bool C2DTriangulate::InsertConstrEdge(long a, long b)
 
 		// if max loop limit has been broken, assert
 		if( j >= C2D_MAX_LOOP) {
-			ASSERT(FALSE);
+			//ASSERT(FALSE);
 		}
 
 	}
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
     }
 
 	return true;
@@ -1019,13 +1019,13 @@ void C2DTriangulate::Retriangulate(C2DEdge *first)
 
 		// if max loop limit has been broken, assert
 		if( j >= C2D_MAX_LOOP) {
-			ASSERT(FALSE);
+			//ASSERT(FALSE);
 		}
 	}
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 	}
 }
 
@@ -1177,7 +1177,7 @@ void C2DTriangulate::Refine(double epsilon)
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 	}
 }
 
@@ -1219,7 +1219,7 @@ void C2DTriangulate::RefineTriangle(C2DEdgeTriangle &triangle)
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 	}
 }
 
@@ -1339,7 +1339,7 @@ void C2DTriangulate::LEPPPointInsert(C2DEdgeTriangle triangle)
 
 	// if max loop limit has been broken, assert
 	if( i >= C2D_MAX_LOOP) {
-		ASSERT(FALSE);
+		//ASSERT(FALSE);
 	}
 }
 
@@ -1506,7 +1506,7 @@ bool C2DTriangulate::DeleteCWEdges(C2DVector p1, C2DVector p2)
 
 	res = DeleteCWEdges(a,b);
 	// a,b must always exist!
-	ASSERT(res == true);
+	//ASSERT(res == true);
 
 	return true;
 }
@@ -1559,11 +1559,11 @@ void C2DTriangulate::DeleteEdges(C2DEdge *edge)
 	bool isHardConstr;
 
 	// this is an error: cannot try to delete a constrained edge
-	ASSERT(edge->IsHardConstrained() == false);
+	//ASSERT(edge->IsHardConstrained() == false);
 
 	// this is an error: if the edge is already marked for deletion,
 	// the function should never have been called
-	ASSERT(edge->GetId() != m_lMark);
+	//ASSERT(edge->GetId() != m_lMark);
 
 	// find CCW-most constrained edge
 	walkingEdge = edge->Onext();
@@ -1574,7 +1574,7 @@ void C2DTriangulate::DeleteEdges(C2DEdge *edge)
 	startEdge = walkingEdge->Oprev();
 
 	// this is an error: cannot have two consecutive CW constrained edges
-	ASSERT(startEdge->IsHardConstrained() == false);
+	//ASSERT(startEdge->IsHardConstrained() == false);
 
 	// mark all edges between constrained edges (if any) for deletion,
 	// otherwise all edges around CW
@@ -1629,7 +1629,7 @@ bool operator<(const C2DTriplet &t1, const C2DTriplet &t2)
 // return the vertex index associated to given edge #
 long C2DEdgeTriangle::GetVertex(unsigned char i)
 {
-	ASSERT(i<=2);
+	//ASSERT(i<=2);
 	return(edges[i]->Vertex());
 }
 

@@ -192,7 +192,7 @@ public:
 	// return the vertex index associated to given edge #
 	long GetVertex(unsigned char i)
 	{
-		ASSERT(i<=2);
+		//ASSERT(i<=2);
 		return(vertex[i]);
 	}
 
@@ -243,7 +243,7 @@ public:
 
 	C2DEdge *GetEdge(unsigned char i)
 	{
-		ASSERT(i<=2);
+		//ASSERT(i<=2);
 		return(edges[i]);
 	}
 
@@ -359,7 +359,7 @@ public:
 
 	long MateVertex()
 	{
-		ASSERT(mate != NULL);
+		//ASSERT(mate != NULL);
 
 		return mate->Vertex();
 	}
@@ -827,7 +827,7 @@ public:
 		edge->Split(index);
 
 		// must be NULL: verex has just been created
-		ASSERT(GetVertexEdge(index) == NULL);
+		//ASSERT(GetVertexEdge(index) == NULL);
 
 		// initialize vertexedge reference
 		SetVertexEdge(index, edge->Mate());
@@ -934,9 +934,9 @@ public:
 		// cannot have different 'small triangle' flags
 		// (i.e., they must be all associated to a small
 		// trangle, or not associated at all)
-		ASSERT( edge1->GetSmallTriangleFlag() == edge2->GetSmallTriangleFlag() );
-		ASSERT( edge1->GetSmallTriangleFlag() == edge3->GetSmallTriangleFlag() );
-		ASSERT( edge2->GetSmallTriangleFlag() == edge3->GetSmallTriangleFlag() );
+		//ASSERT( edge1->GetSmallTriangleFlag() == edge2->GetSmallTriangleFlag() );
+		//ASSERT( edge1->GetSmallTriangleFlag() == edge3->GetSmallTriangleFlag() );
+		//ASSERT( edge2->GetSmallTriangleFlag() == edge3->GetSmallTriangleFlag() );
 
 		if( edge1->GetSmallTriangleFlag() ) {
 			// clear flags
@@ -945,9 +945,9 @@ public:
 			edge3->SetSmallTriangleFlag(false);
 			// the edges, belonging to the same triangle in 'smalltri' list
 			// cannot have different 'small triangle' pointers
-			ASSERT( edge1->GetSmallTriangle() == edge2->GetSmallTriangle());
-			ASSERT( edge1->GetSmallTriangle() == edge3->GetSmallTriangle() );
-			ASSERT( edge2->GetSmallTriangle() == edge3->GetSmallTriangle() );
+			//ASSERT( edge1->GetSmallTriangle() == edge2->GetSmallTriangle());
+			//ASSERT( edge1->GetSmallTriangle() == edge3->GetSmallTriangle() );
+			//ASSERT( edge2->GetSmallTriangle() == edge3->GetSmallTriangle() );
 			// erase from list
 			smalltri.erase(edge1->GetSmallTriangle());
 		}

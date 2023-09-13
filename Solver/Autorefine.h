@@ -33,17 +33,17 @@
 #include <string>
 #include <map>
 
-#ifdef MS_VS
-// for memory state and debug macros (e.g. _ASSERT), when using MS VisualC++
-#include <crtdbg.h>
-#else
-// for wxASSERT
-#  include <wx/debug.h>
-#  define _ASSERT wxASSERT
-#endif
+//#ifdef MS_VS
+//// for memory state and debug macros (e.g. _ASSERT), when using MS VisualC++
+//#include <crtdbg.h>
+//#else
+//// for wxASSERT
+//#  include <wx/debug.h>
+//#  define _ASSERT wxASSERT
+//#endif
 
 // for wxFileName
-#include <wx/filename.h>
+//#include <wx/filename.h>
 
 // link with FasterCap main frame
 #include "../FasterCapGlobal.h"
@@ -258,7 +258,7 @@ protected:
 						bool isdiel, double outpermRe, double outpermIm, double inpermRe, double inpermIm, C3DVector &dielrefpoint);
 	bool FindConductorFromName(char *name, StlAutoCondDeque::iterator &itc);
 	void MergeConductors(StlAutoCondDeque::iterator itc, StlAutoCondDeque::iterator itc_old);
-    unsigned long PortableGetTempFileName(const wxString &dirName, const wxString &prefix, unsigned long id, wxFileName &filenameobj);
+    unsigned long PortableGetTempFileName(const std::string &dirName, const std::string &prefix, unsigned long id, std::string&filenameobj);
 
 
 	CPotential m_clsPotential;
