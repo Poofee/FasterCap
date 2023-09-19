@@ -28,7 +28,7 @@
 // with N-body methods (Fast Multipole, Hierarchical)
 // Enrico Di Lorenzo, 2002/08/21
 
-#include "../stdafx.h"
+//#include "../stdafx.h"
 
 #include <string>
 #include <iostream>

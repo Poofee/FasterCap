@@ -29,7 +29,7 @@
 //
 // Enrico Di Lorenzo, 2005/10/04
 
-#include "../stdafx.h"
+//#include "../stdafx.h"
 
 #include <time.h>
 // for multi-thread timing

@@ -26,7 +26,7 @@
 //
 // Enrico Di Lorenzo, 2005/10/11
 
-#include "../stdafx.h"
+//#include "../stdafx.h"
 
 #include <fstream>
 #include <time.h>
