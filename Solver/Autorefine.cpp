@@ -154,7 +154,7 @@ void CAutoRefine::Clean(int command, CAutoRefGlobalVars globalVars)
 {
 	unsigned int i;
 	unsigned long totChunksNum, k;
-	//wxFileName tmpFileName;
+	std::string tmpFileName;
     StlAutoCondDeque::iterator itc;
 
 	if( (command == AUTOREFINE_DEALLMEM_ALL) ||
@@ -202,21 +202,21 @@ void CAutoRefine::Clean(int command, CAutoRefGlobalVars globalVars)
 		// retrieve file name from chunk IDs
 		for(k=0; k< totChunksNum; k++) {
 			// get the temp file path and name from the ID
-			//PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[k], tmpFileName);
+			PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[k], tmpFileName);
 			// delete the file
-			//if( remove((const char*)(tmpFileName.GetLongPath())) != 0 ) {
-			//	ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.GetLongPath()));
-			//	ErrMsg("       Temporary files must be manually removed.\n");
-			//	ErrMsg("       Continuing with memory deallocation\n");
-			//}
+			if( remove((const char*)(tmpFileName.GetLongPath())) != 0 ) {
+				ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.GetLongPath()));
+				ErrMsg("       Temporary files must be manually removed.\n");
+				ErrMsg("       Continuing with memory deallocation\n");
+			}
 			// get the temp file path and name from the ID
-			//PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[k], tmpFileName);
+			PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[k], tmpFileName);
 			// delete the file
-			//if( remove((const char*)(tmpFileName.GetLongPath())) != 0 ) {
-			//	ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.GetLongPath()));
-			//	ErrMsg("       Temporary files must be manually removed.\n");
-			//	ErrMsg("       Continuing with memory deallocation\n");
-			//}
+			if( remove((const char*)(tmpFileName.GetLongPath())) != 0 ) {
+				ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.GetLongPath()));
+				ErrMsg("       Temporary files must be manually removed.\n");
+				ErrMsg("       Continuing with memory deallocation\n");
+			}
 		}
 		// deallocate the memory
 		delete m_ulUniqueLinkChunkIDs;
@@ -486,9 +486,9 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 	unsigned long j, k, totChunksNum;
 	// 'i' must have signed integral type due to MS OpenMP limitation (does not accept unsigned)
 	long i;
-	//wxLongLong mem_Potest, mem_pCharge, mem_LinksTotal, mem_AvailVirtual, mem_MaxAllocVirtual, mem_AllocVirtual;
-	//wxLongLong freeDiskBytes;
-	//wxFileName tmpFileName, tmpFNObj;
+	long long mem_Potest, mem_pCharge, mem_LinksTotal, mem_AvailVirtual, mem_MaxAllocVirtual, mem_AllocVirtual;
+	long long freeDiskBytes;
+	std::string tmpFileName, tmpFNObj;
 	bool goOutOfCore, retBool;
 	unsigned long uniqueFileID;
 	unsigned long linkIndex, chunk, block, nodeIndex, nodeBlockEnd, linksPerBlock;
@@ -515,150 +515,150 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 
 
 	// calculate the memory needed for the potential estimates
-	//mem_Potest = ((wxLongLong)m_ulLinksNum[m_ucInteractionLevel]) * ((wxLongLong)sizeof(double));
+	mem_Potest = ((long long)m_ulLinksNum[m_ucInteractionLevel]) * ((long long)sizeof(double));
 	// calculate the memory needed for the pointer to interacting panel charge
-	//mem_pCharge = ((wxLongLong)m_ulLinksNum[m_ucInteractionLevel]) * ((wxLongLong)sizeof(double*));
+	mem_pCharge = ((long long)m_ulLinksNum[m_ucInteractionLevel]) * ((long long)sizeof(double*));
 	// total required memory
-	//mem_LinksTotal = mem_Potest + mem_pCharge;
+	mem_LinksTotal = mem_Potest + mem_pCharge;
 
 	// get available memory
-	//mem_AvailVirtual = (wxLongLong) wxGetFreeMemory();
+	mem_AvailVirtual = (long long) wxGetFreeMemory();
 // debug
 //mem_AvailVirtual = 50000000;
 
-	//goOutOfCore = false;
-	//if(mem_AvailVirtual.ToLong() == -1L) {
-	//	ErrMsg("Error: cannot retrieve the information about the free memory quantity\n");
-	//	ErrMsg("       Cannot go out-of-core, continuing in-core\n");
-	//}
-	//else if( mem_LinksTotal.ToDouble() * globalVars.m_dOutOfCoreRatio < mem_AvailVirtual.ToDouble() ) {
-	//	// no need to go out of core
-	//}
-	//else {
-	//	LogMsg("Estimated memory required for storing panel interaction links is: %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE).ToLong());
-	//	LogMsg("Available free memory left is: %lu Mbytes\n", (mem_AvailVirtual/G_MEGABYTE).ToLong());
-	//	LogMsg("Estimated links memory is more than %.0f%% of the available free memory. Going out-of-core.\n", 100.0f / globalVars.m_dOutOfCoreRatio);
+	goOutOfCore = false;
+	if(mem_AvailVirtual.ToLong() == -1L) {
+		ErrMsg("Error: cannot retrieve the information about the free memory quantity\n");
+		ErrMsg("       Cannot go out-of-core, continuing in-core\n");
+	}
+	else if( mem_LinksTotal.ToDouble() * globalVars.m_dOutOfCoreRatio < mem_AvailVirtual.ToDouble() ) {
+		// no need to go out of core
+	}
+	else {
+		LogMsg("Estimated memory required for storing panel interaction links is: %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE).ToLong());
+		LogMsg("Available free memory left is: %lu Mbytes\n", (mem_AvailVirtual/G_MEGABYTE).ToLong());
+		LogMsg("Estimated links memory is more than %.0f%% of the available free memory. Going out-of-core.\n", 100.0f / globalVars.m_dOutOfCoreRatio);
 
-	//	// try to create a temporary file, to understand if we can access the temp directory
-	//	// and if we have the write access rights to it
-	//	uniqueFileID = PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, 0, tmpFileName);
+		// try to create a temporary file, to understand if we can access the temp directory
+		// and if we have the write access rights to it
+		uniqueFileID = PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, 0, tmpFileName);
 
-	//	if(uniqueFileID == 0) {
-	//		// get the temp path
-	//		tmpFNObj.Assign(wxFileName::GetTempDir());
+		if(uniqueFileID == 0) {
+			// get the temp path
+			tmpFNObj.Assign(wxFileName::GetTempDir());
 
-	//		// remark: use long path name version (if possible), i.e. without '~'
-	//		ErrMsg("Error: cannot access the temporary folder '%s' to store out-of-core files\n", (const char*)(tmpFNObj.GetLongPath()));
-	//		ErrMsg("       Cannot go out-of-core, continuing in-core\n");
-	//	}
-	//	else {
-	//		// remove the created temp file
-	//		remove(tmpFileName.GetFullPath().c_str());
+			// remark: use long path name version (if possible), i.e. without '~'
+			ErrMsg("Error: cannot access the temporary folder '%s' to store out-of-core files\n", (const char*)(tmpFNObj.GetLongPath()));
+			ErrMsg("       Cannot go out-of-core, continuing in-core\n");
+		}
+		else {
+			// remove the created temp file
+			remove(tmpFileName.GetFullPath().c_str());
 
-	//		// get only the path part, w/o the file name
-	//		tmpFNObj.Assign(tmpFileName.GetPath());
+			// get only the path part, w/o the file name
+			tmpFNObj.Assign(tmpFileName.GetPath());
 
-	//		LogMsg("Out-of-core temporary files folder: '%s'\n", (const char*)tmpFNObj.GetLongPath());
+			LogMsg("Out-of-core temporary files folder: '%s'\n", (const char*)tmpFNObj.GetLongPath());
 
-	//		// and check the free space
-	//		// This function returns the total number of bytes and number of free bytes on the disk
-	//		//  containing the directory path (it should exist).
-	//		retBool = wxGetDiskSpace(tmpFileName.GetPath(), &freeDiskBytes);
+			// and check the free space
+			// This function returns the total number of bytes and number of free bytes on the disk
+			//  containing the directory path (it should exist).
+			retBool = wxGetDiskSpace(tmpFileName.GetPath(), &freeDiskBytes);
 
-	//		if(retBool == false) {
-	//			ErrMsg("Error: cannot retrieve the free space on disk for directory %s\n", (const char*)tmpFNObj.GetLongPath());
-	//			ErrMsg("       Cannot go out-of-core, continuing in-core\n");
-	//		}
-	//		else {
-	//			if( freeDiskBytes < mem_LinksTotal ) {
-	//				ErrMsg("Error: free space in the temporary directory on disk is less than the required value of %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE).ToLong());
-	//				ErrMsg("       Cannot go out-of-core, trying to continue in-core\n");
-	//			}
+			if(retBool == false) {
+				ErrMsg("Error: cannot retrieve the free space on disk for directory %s\n", (const char*)tmpFNObj.GetLongPath());
+				ErrMsg("       Cannot go out-of-core, continuing in-core\n");
+			}
+			else {
+				if( freeDiskBytes < mem_LinksTotal ) {
+					ErrMsg("Error: free space in the temporary directory on disk is less than the required value of %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE).ToLong());
+					ErrMsg("       Cannot go out-of-core, trying to continue in-core\n");
+				}
 
-	//			// ok we can go out-of-core
-	//			goOutOfCore = true;
-	//		}
-	//	}
-	//}
+				// ok we can go out-of-core
+				goOutOfCore = true;
+			}
+		}
+	}
 
-	//if(goOutOfCore == true) {
-	//	// 'mem_AvailVirtual / globalVars.m_dOutOfCoreRatio' is the max ram memory block we decided to allocate for storing the chunks
-	//	mem_MaxAllocVirtual.Assign(mem_AvailVirtual.ToDouble() / globalVars.m_dOutOfCoreRatio);
-	//	// let's calculate how many chunks fit in this block size
-	//	// We use the wxLongLong division, which is available either with native 64 bits integers or through wxWidgets
-	//	// implementation (remark: the class documentation does not report some operators, including '/', '<', etc.).
-	//	// Integers division results in quotient and remainder. Ignoring the remainder results always in truncation
-	//	// (approximation to the lower integer).
-	//	// Here we want truncation: the number of chunks kept in memory at the same time must be such
-	//	// to require in any case an amount of memory below the total max ram memory block allocated
-	//	// for the purpose ('mem_MaxAllocVirtual')
-	//	// Remark: all values are casted to wxLongLong before operations happen, to avoid implicit conversions that may lead
-	//	// to errors, e.g. if 'AUTOREFINE_LINK_CHUNK_SIZE' is considered long, sizeof is considered long, but their product
-	//	// needs more than 32 bits to be stored; not likely, but to be avoided anyway
-	//	m_ulLinkChunkNum[m_ucInteractionLevel] = ( mem_MaxAllocVirtual / ( ((wxLongLong)AUTOREFINE_LINK_CHUNK_SIZE) * ((wxLongLong)(sizeof(double) + sizeof(double*))) ) ).ToLong();
-	//	if(m_ulLinkChunkNum[m_ucInteractionLevel] == 0) {
-	//		ErrMsg("Error: available free memory is not enough to allocate any chunk\n");
-	//		ErrMsg("       Cannot go out-of-core, terminating process\n");
-	//		return FC_CANNOT_GO_OOC;
-	//	}
-	//	// let's calculate the real size of the memory block (it has been rounded down to fit entire chunks)
-	//	mem_AllocVirtual = ((wxLongLong)AUTOREFINE_LINK_CHUNK_SIZE) * ((wxLongLong)(sizeof(double) + sizeof(double*))) * ((wxLongLong)m_ulLinkChunkNum[m_ucInteractionLevel]);
-	//	// now let's calculate how many blocks we need
-	//	m_ulBlocksNum = (unsigned long) (mem_LinksTotal / mem_AllocVirtual).ToLong();
-	//	// result of the division is rounded towards zero (truncated). So if there is a remainder, need one block more
-	//	if(mem_LinksTotal % mem_AllocVirtual != 0) {
-	//		m_ulBlocksNum++;
-	//	}
-	//	// remark: if number of blocks is one, no need to go out-of-core
-	//}
-	//else {
-	//	// calculate how many chunks are needed
-	//	m_ulLinkChunkNum[m_ucInteractionLevel] = m_ulLinksNum[m_ucInteractionLevel] / AUTOREFINE_LINK_CHUNK_SIZE;
-	//	// result of the division is rounded towards zero. So if there is a remainder, need one chunk more
-	//	if(m_ulLinksNum[m_ucInteractionLevel] % AUTOREFINE_LINK_CHUNK_SIZE != 0) {
-	//		m_ulLinkChunkNum[m_ucInteractionLevel]++;
-	//	}
-	//	// and only one block (all in-core)
+	if(goOutOfCore == true) {
+		// 'mem_AvailVirtual / globalVars.m_dOutOfCoreRatio' is the max ram memory block we decided to allocate for storing the chunks
+		mem_MaxAllocVirtual.Assign(mem_AvailVirtual.ToDouble() / globalVars.m_dOutOfCoreRatio);
+		// let's calculate how many chunks fit in this block size
+		// We use the wxLongLong division, which is available either with native 64 bits integers or through wxWidgets
+		// implementation (remark: the class documentation does not report some operators, including '/', '<', etc.).
+		// Integers division results in quotient and remainder. Ignoring the remainder results always in truncation
+		// (approximation to the lower integer).
+		// Here we want truncation: the number of chunks kept in memory at the same time must be such
+		// to require in any case an amount of memory below the total max ram memory block allocated
+		// for the purpose ('mem_MaxAllocVirtual')
+		// Remark: all values are casted to wxLongLong before operations happen, to avoid implicit conversions that may lead
+		// to errors, e.g. if 'AUTOREFINE_LINK_CHUNK_SIZE' is considered long, sizeof is considered long, but their product
+		// needs more than 32 bits to be stored; not likely, but to be avoided anyway
+		m_ulLinkChunkNum[m_ucInteractionLevel] = ( mem_MaxAllocVirtual / ( ((long long)AUTOREFINE_LINK_CHUNK_SIZE) * ((long long)(sizeof(double) + sizeof(double*))) ) ).ToLong();
+		if(m_ulLinkChunkNum[m_ucInteractionLevel] == 0) {
+			ErrMsg("Error: available free memory is not enough to allocate any chunk\n");
+			ErrMsg("       Cannot go out-of-core, terminating process\n");
+			return FC_CANNOT_GO_OOC;
+		}
+		// let's calculate the real size of the memory block (it has been rounded down to fit entire chunks)
+		mem_AllocVirtual = ((long long)AUTOREFINE_LINK_CHUNK_SIZE) * ((long long)(sizeof(double) + sizeof(double*))) * ((long long)m_ulLinkChunkNum[m_ucInteractionLevel]);
+		// now let's calculate how many blocks we need
+		m_ulBlocksNum = (unsigned long) (mem_LinksTotal / mem_AllocVirtual).ToLong();
+		// result of the division is rounded towards zero (truncated). So if there is a remainder, need one block more
+		if(mem_LinksTotal % mem_AllocVirtual != 0) {
+			m_ulBlocksNum++;
+		}
+		// remark: if number of blocks is one, no need to go out-of-core
+	}
+	else {
+		// calculate how many chunks are needed
+		m_ulLinkChunkNum[m_ucInteractionLevel] = m_ulLinksNum[m_ucInteractionLevel] / AUTOREFINE_LINK_CHUNK_SIZE;
+		// result of the division is rounded towards zero. So if there is a remainder, need one chunk more
+		if(m_ulLinksNum[m_ucInteractionLevel] % AUTOREFINE_LINK_CHUNK_SIZE != 0) {
+			m_ulLinkChunkNum[m_ucInteractionLevel]++;
+		}
+		// and only one block (all in-core)
 		m_ulBlocksNum = 1;
-	//}
+	}
 
-	//// allocate temporary file names for all chunks to be stored out-of-core
-	////
+	// allocate temporary file names for all chunks to be stored out-of-core
+	//
 
-	//// allocate array of chunk file name IDs (only if we need to go out-of-core)
-	////
-	//if(m_ulBlocksNum > 1) {
-	//	// total number of chunks
-	//	totChunksNum = m_ulBlocksNum * m_ulLinkChunkNum[m_ucInteractionLevel];
-	//	// SAFENEW_ARRAY_RET(TYPE, VAR, LEN, MEM)
-	//	SAFENEW_ARRAY_RET(unsigned long, m_ulUniqueLinkChunkIDs, totChunksNum, g_clsMemUsage.m_ulLinksMem)
-	//	SAFENEW_ARRAY_RET(unsigned long, m_ulUniquePotChunkIDs, totChunksNum, g_clsMemUsage.m_ulLinksMem)
-	//	// create IDs
-	//	for(i=0, k=0; i< (long)m_ulBlocksNum; i++) {
-	//		for(j=0; j< m_ulLinkChunkNum[m_ucInteractionLevel]; j++) {
+	// allocate array of chunk file name IDs (only if we need to go out-of-core)
+	//
+	if(m_ulBlocksNum > 1) {
+		// total number of chunks
+		totChunksNum = m_ulBlocksNum * m_ulLinkChunkNum[m_ucInteractionLevel];
+		// SAFENEW_ARRAY_RET(TYPE, VAR, LEN, MEM)
+		SAFENEW_ARRAY_RET(unsigned long, m_ulUniqueLinkChunkIDs, totChunksNum, g_clsMemUsage.m_ulLinksMem)
+		SAFENEW_ARRAY_RET(unsigned long, m_ulUniquePotChunkIDs, totChunksNum, g_clsMemUsage.m_ulLinksMem)
+		// create IDs
+		for(i=0, k=0; i< (long)m_ulBlocksNum; i++) {
+			for(j=0; j< m_ulLinkChunkNum[m_ucInteractionLevel]; j++) {
 
-	//			uniqueFileID = PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, 0, tmpFileName);
-	//			if(uniqueFileID == 0) {
-	//				ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.GetFullPath());
-	//				ErrMsg("       Cannot go out-of-core, stopping process\n");
+				uniqueFileID = PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, 0, tmpFileName);
+				if(uniqueFileID == 0) {
+					ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.GetFullPath());
+					ErrMsg("       Cannot go out-of-core, stopping process\n");
 
-	//				return FC_CANNOT_GO_OOC;
-	//			}
-	//			m_ulUniqueLinkChunkIDs[k] = uniqueFileID;
+					return FC_CANNOT_GO_OOC;
+				}
+				m_ulUniqueLinkChunkIDs[k] = uniqueFileID;
 
-	//			uniqueFileID = PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, 0, tmpFileName);
-	//			if(uniqueFileID == 0) {
-	//				ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.GetFullPath());
-	//				ErrMsg("       Cannot go out-of-core, stopping process\n");
+				uniqueFileID = PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, 0, tmpFileName);
+				if(uniqueFileID == 0) {
+					ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.GetFullPath());
+					ErrMsg("       Cannot go out-of-core, stopping process\n");
 
-	//				return FC_CANNOT_GO_OOC;
-	//			}
-	//			m_ulUniquePotChunkIDs[k] = uniqueFileID;
+					return FC_CANNOT_GO_OOC;
+				}
+				m_ulUniquePotChunkIDs[k] = uniqueFileID;
 
-	//			k++;
-	//		}
-	//	}
-	//}
+				k++;
+			}
+		}
+	}
 
 
 	// allocate interaction link arrays
@@ -851,59 +851,59 @@ int CAutoRefine::SaveLinks(bool saveAlsoPot)
 {
 	FILE *stream;
 	unsigned long j, k, start;
-	//wxFileName tmpFileName;
+	wxFileName tmpFileName;
 	int numwritten, ret;
 
 	ret = FC_NORMAL_END;
 
-	//for(j=0; j< m_ulLinkChunkNum[m_ucInteractionLevel]; j++) {
-	//	// current start of chunks block
-	//	start  = m_ulCurrBlock * m_ulLinkChunkNum[m_ucInteractionLevel];
+	for(j=0; j< m_ulLinkChunkNum[m_ucInteractionLevel]; j++) {
+		// current start of chunks block
+		start  = m_ulCurrBlock * m_ulLinkChunkNum[m_ucInteractionLevel];
 
-	//	//PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[start + j], tmpFileName);
-	//	// open the file
-	//	stream = fopen(tmpFileName.GetLongPath(), "wb");
-	//	if( stream == NULL ) {
-	//		ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.GetLongPath());
-	//		return FC_FILE_ERROR;
-	//	}
+		PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[start + j], tmpFileName);
+		// open the file
+		stream = fopen(tmpFileName.GetLongPath(), "wb");
+		if( stream == NULL ) {
+			ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.GetLongPath());
+			return FC_FILE_ERROR;
+		}
 
-	//	// and write current chunk to disk
-	//	for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
-	//		numwritten = fwrite( &m_pdPanelPtrLinks[m_ucInteractionLevel][j][k], sizeof( CAutoPanel* ), 1, stream );
-	//		if(numwritten != 1) {
-	//			ErrMsg("Error: cannot write to temporary out-of-core file, stopping the process\n");
-	//			j = m_ulLinkChunkNum[m_ucInteractionLevel];
-	//			ret = FC_FILE_ERROR;
-	//			break;
-	//		}
-	//	}
+		// and write current chunk to disk
+		for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
+			numwritten = fwrite( &m_pdPanelPtrLinks[m_ucInteractionLevel][j][k], sizeof( CAutoPanel* ), 1, stream );
+			if(numwritten != 1) {
+				ErrMsg("Error: cannot write to temporary out-of-core file, stopping the process\n");
+				j = m_ulLinkChunkNum[m_ucInteractionLevel];
+				ret = FC_FILE_ERROR;
+				break;
+			}
+		}
 
-	//	fclose(stream);
+		fclose(stream);
 
-	//	if(saveAlsoPot == true && j < m_ulLinkChunkNum[m_ucInteractionLevel]) {
-	//		//PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[start + j], tmpFileName);
-	//		// open the file
-	//		stream = fopen(tmpFileName.GetLongPath(), "wb");
-	//		if( stream == NULL ) {
-	//			ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.GetLongPath());
-	//			return FC_FILE_ERROR;
-	//		}
+		if(saveAlsoPot == true && j < m_ulLinkChunkNum[m_ucInteractionLevel]) {
+			PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[start + j], tmpFileName);
+			// open the file
+			stream = fopen(tmpFileName.GetLongPath(), "wb");
+			if( stream == NULL ) {
+				ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.GetLongPath());
+				return FC_FILE_ERROR;
+			}
 
-	//		// and write current chunk to disk
-	//		for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
-	//			numwritten = fwrite( &m_dPotCoeffLinks[m_ucInteractionLevel][j][k], sizeof( double ), 1, stream );
-	//			if(numwritten != 1) {
-	//				ErrMsg("Error: cannot write to temporary out-of-core file, stopping the process\n");
-	//				j = m_ulLinkChunkNum[m_ucInteractionLevel];
-	//				ret = FC_FILE_ERROR;
-	//				break;
-	//			}
-	//		}
+			// and write current chunk to disk
+			for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
+				numwritten = fwrite( &m_dPotCoeffLinks[m_ucInteractionLevel][j][k], sizeof( double ), 1, stream );
+				if(numwritten != 1) {
+					ErrMsg("Error: cannot write to temporary out-of-core file, stopping the process\n");
+					j = m_ulLinkChunkNum[m_ucInteractionLevel];
+					ret = FC_FILE_ERROR;
+					break;
+				}
+			}
 
-	//		fclose(stream);
-	//	}
-	//}
+			fclose(stream);
+		}
+	}
 
 	return ret;
 }
@@ -912,7 +912,7 @@ int CAutoRefine::LoadLinks(unsigned long block, bool loadAlsoPot)
 {
 	FILE *stream;
 	unsigned long j, k, start;
-	//wxFileName tmpFileName;
+	wxFileName tmpFileName;
 	int numwritten, ret;
 
 	ret = FC_NORMAL_END;
@@ -920,66 +920,66 @@ int CAutoRefine::LoadLinks(unsigned long block, bool loadAlsoPot)
 	// set the current memory block to the block actually being loaded from disk
 	m_ulCurrBlock = block;
 
-	//for(j=0; j< m_ulLinkChunkNum[m_ucInteractionLevel]; j++) {
-	//	// current start of chunks block
-	//	start  = m_ulCurrBlock * m_ulLinkChunkNum[m_ucInteractionLevel];
+	for(j=0; j< m_ulLinkChunkNum[m_ucInteractionLevel]; j++) {
+		// current start of chunks block
+		start  = m_ulCurrBlock * m_ulLinkChunkNum[m_ucInteractionLevel];
 
-	//	PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[start + j], tmpFileName);
-	//	// open the file
-	//	stream = fopen(tmpFileName.GetFullPath().c_str(), "rb");
-	//	if( stream == NULL ) {
-	//		ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.GetFullPath());
-	//		return FC_FILE_ERROR;
-	//	}
+		PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[start + j], tmpFileName);
+		// open the file
+		stream = fopen(tmpFileName.GetFullPath().c_str(), "rb");
+		if( stream == NULL ) {
+			ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.GetFullPath());
+			return FC_FILE_ERROR;
+		}
 
-	//	// and read the current chunk from disk
-	//	for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
-	//		numwritten = fread( &m_pdPanelPtrLinks[m_ucInteractionLevel][j][k], sizeof( CAutoPanel* ), 1, stream );
-	//		if(numwritten != 1) {
-	//			if(feof(stream)) {
-	//				ErrMsg("Error: unexpected end-of-file of temporary out-of-core file, stopping the process\n");
-	//			}
-	//			else {
-	//				ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
-	//			}
-	//			ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
-	//			j = m_ulLinkChunkNum[m_ucInteractionLevel];
-	//			ret = FC_FILE_ERROR;
-	//			break;
-	//		}
-	//	}
+		// and read the current chunk from disk
+		for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
+			numwritten = fread( &m_pdPanelPtrLinks[m_ucInteractionLevel][j][k], sizeof( CAutoPanel* ), 1, stream );
+			if(numwritten != 1) {
+				if(feof(stream)) {
+					ErrMsg("Error: unexpected end-of-file of temporary out-of-core file, stopping the process\n");
+				}
+				else {
+					ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
+				}
+				ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
+				j = m_ulLinkChunkNum[m_ucInteractionLevel];
+				ret = FC_FILE_ERROR;
+				break;
+			}
+		}
 
-	//	fclose(stream);
+		fclose(stream);
 
-	//	if(loadAlsoPot == true && j < m_ulLinkChunkNum[m_ucInteractionLevel]) {
-	//		PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[start + j], tmpFileName);
-	//		// open the file
-	//		stream = fopen(tmpFileName.GetFullPath().c_str(), "rb");
-	//		if( stream == NULL ) {
-	//			ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.GetFullPath());
-	//			return FC_FILE_ERROR;
-	//		}
+		if(loadAlsoPot == true && j < m_ulLinkChunkNum[m_ucInteractionLevel]) {
+			PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[start + j], tmpFileName);
+			// open the file
+			stream = fopen(tmpFileName.GetFullPath().c_str(), "rb");
+			if( stream == NULL ) {
+				ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.GetFullPath());
+				return FC_FILE_ERROR;
+			}
 
-	//		// and read the current chunk from disk
-	//		for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
-	//			numwritten = fread( &m_dPotCoeffLinks[m_ucInteractionLevel][j][k], sizeof( double ), 1, stream );
-	//			if(numwritten != 1) {
-	//				if(feof(stream)) {
-	//					ErrMsg("Error: unexpected end-of-file of temporary out-of-core file, stopping the process\n");
-	//				}
-	//				else {
-	//					ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
-	//				}
-	//				ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
-	//				j = m_ulLinkChunkNum[m_ucInteractionLevel];
-	//				ret = FC_FILE_ERROR;
-	//				break;
-	//			}
-	//		}
+			// and read the current chunk from disk
+			for(k = 0; k < AUTOREFINE_LINK_CHUNK_SIZE; k++) {
+				numwritten = fread( &m_dPotCoeffLinks[m_ucInteractionLevel][j][k], sizeof( double ), 1, stream );
+				if(numwritten != 1) {
+					if(feof(stream)) {
+						ErrMsg("Error: unexpected end-of-file of temporary out-of-core file, stopping the process\n");
+					}
+					else {
+						ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
+					}
+					ErrMsg("Error: cannot read from temporary out-of-core file, stopping the process\n");
+					j = m_ulLinkChunkNum[m_ucInteractionLevel];
+					ret = FC_FILE_ERROR;
+					break;
+				}
+			}
 
-	//		fclose(stream);
-	//	}
-	//}
+			fclose(stream);
+		}
+	}
 
 	return ret;
 }
@@ -994,83 +994,83 @@ int CAutoRefine::LoadLinks(unsigned long block, bool loadAlsoPot)
 // is prepended as path to the 'tempfullfilename'.
 // Remark: if 'dirName' is specified, it must end with the path separator (to this purpose you can use the wxFileName::GetPathWithSep()
 // function), otherwise the last directory is taken as a file name
-unsigned long CAutoRefine::PortableGetTempFileName(const std::string &dirName, const std::string &prefix, unsigned long id, std::string &filenameobj)
+unsigned long CAutoRefine::PortableGetTempFileName(const std::string&dirName, const std::string&prefix, unsigned long id, std::string&filenameobj)
 {
-	//std::string dir, name;
-	//int i, j;
-	//FILE *fout;
+	std::string dir, name;
+	int i, j;
+	FILE *fout;
 
-	//// clean up the file name object
-	//filenameobj.Clear();
+	// clean up the file name object
+	filenameobj.Clear();
 
-	//// extract the directory specified by 'dirName'
-	//wxFileName::SplitPath(dirName, &dir, &name, NULL);
+	// extract the directory specified by 'dirName'
+	wxFileName::SplitPath(dirName, &dir, &name, NULL);
 
-	//// if dirName specified an empty path
-	//if (dir.empty() == true) {
-	//	dir = wxFileName::GetTempDir();
-	//}
+	// if dirName specified an empty path
+	if (dir.empty() == true) {
+		dir = wxFileName::GetTempDir();
+	}
 
-	//if(id != 0) {
-	//	// must not create the file, only the filename, and do not test for uniqueness
-	//	//
-	//	// compose the name
-	//	name = prefix + std::string::Format(wxT("%lX"), id) + wxT(".tmp");
-	//	// merge the path and the filename
-	//	filenameobj.Assign(dir, name);
-	//}
-	//else {
-	//	id = m_ulTempFileID;
-	//	for(id=m_ulTempFileID, i=0; i<AR_MAX_TEMP_IDS; i++) {
-	//		for(j=0; j<AR_MAX_TEMP_IDS; j++, id++ ) {
-	//			// compose the name
-	//			name = prefix + std::string::Format(wxT("%lX"), id) + wxT(".tmp");
-	//			// merge the path and the filename
-	//			filenameobj.Assign(dir, name);
-	//			if(filenameobj.FileExists() == false) {
-	//				break;
-	//			}
-	//		}
-	//		if(filenameobj.FileExists() == false) {
-	//			break;
-	//		}
-	//		else {
-	//			// get a new base ID chosen randomly
-	//			id = (unsigned long) rand();
-	//		}
-	//	}
-	//	// store the next id for the next time the function will be called
-	//	m_ulTempFileID = id + 1;
-	//	// if in the end we did NOT found the name, assign zero to 'id' to signal it to the caller
-	//	if(filenameobj.FileExists() == true) {
-	//		id = 0;
-	//	}
-	//	else {
-	//		// now create the file to:
-	//		// 1) test we have the right priviledges to write in this directory
-	//		// 2) 'book' the file name to prevent others from creating the same file name,
-	//		//    before the caller could have the chance to actually use it
-	//		fout = fopen(filenameobj.GetFullPath().c_str(), "w");
-	//		if(fout == NULL) {
-	//			id = 0;
-	//		}
-	//		else {
-	//			fclose(fout);
-	//		}
-	//	}
-	//}
+	if(id != 0) {
+		// must not create the file, only the filename, and do not test for uniqueness
+		//
+		// compose the name
+		name = prefix + wxString::Format(("%lX"), id) + (".tmp");
+		// merge the path and the filename
+		filenameobj.Assign(dir, name);
+	}
+	else {
+		id = m_ulTempFileID;
+		for(id=m_ulTempFileID, i=0; i<AR_MAX_TEMP_IDS; i++) {
+			for(j=0; j<AR_MAX_TEMP_IDS; j++, id++ ) {
+				// compose the name
+				name = prefix + wxString::Format(("%lX"), id) + (".tmp");
+				// merge the path and the filename
+				filenameobj.Assign(dir, name);
+				if(filenameobj.FileExists() == false) {
+					break;
+				}
+			}
+			if(filenameobj.FileExists() == false) {
+				break;
+			}
+			else {
+				// get a new base ID chosen randomly
+				id = (unsigned long) rand();
+			}
+		}
+		// store the next id for the next time the function will be called
+		m_ulTempFileID = id + 1;
+		// if in the end we did NOT found the name, assign zero to 'id' to signal it to the caller
+		if(filenameobj.FileExists() == true) {
+			id = 0;
+		}
+		else {
+			// now create the file to:
+			// 1) test we have the right priviledges to write in this directory
+			// 2) 'book' the file name to prevent others from creating the same file name,
+			//    before the caller could have the chance to actually use it
+			fout = fopen(filenameobj.GetFullPath().c_str(), "w");
+			if(fout == NULL) {
+				id = 0;
+			}
+			else {
+				fclose(fout);
+			}
+		}
+	}
 
 	return id;
 }
 
 void CAutoRefine::DumpMemoryInfo()
 {
-	//wxLongLong freeMem;
+	long long freeMem;
 
 	// get available memory
-	//freeMem = (wxLongLong) wxGetFreeMemory();
+	freeMem = (long long) wxGetFreeMemory();
 
-	//LogMsg("Available virtual memory: %lu kilobytes\n", (freeMem/G_KILOBYTE).ToLong());
+	LogMsg("Available virtual memory: %lu kilobytes\n", (freeMem/G_KILOBYTE).ToLong());
 
     // Non-portable method
 	/*
@@ -1235,7 +1235,7 @@ void CAutoRefine::OutputFastCapFile(std::string fileinname, std::string suffix, 
 	std::string condfilenameext, condfilenopathext, ext;
 	std::string::size_type pos;
 	int i;
-	std::string dielIndexStr;
+	wxString dielIndexStr;
 
 	m_pLocalCondCharge = condCharges;
 
@@ -1301,7 +1301,7 @@ void CAutoRefine::OutputFastCapFile(std::string fileinname, std::string suffix, 
 			for(i=0; i<(*itc)->m_ucMaxSurfOutperm; i++) {
 				// compose the extension
 				ext = "_";
-				//dielIndexStr = std::string::Format("%d", i);
+				dielIndexStr = wxString::Format("%d", i);
 				ext += dielIndexStr.c_str();
 				ext += ".txt";
 				// and build the file names
@@ -1649,7 +1649,7 @@ void CAutoRefine::DebugOutputTree2()
 
 	fp = fopen("pot_tree2.txt", "w");
 
-	//ASSERT(fp != NULL);
+	ASSERT(fp != NULL);
 
 	blockNo = 1;
 
@@ -4571,7 +4571,7 @@ int CAutoRefine::ReadFastCapFile(CAutoRefGlobalVars *globalVars)
 	long ret;
 	clock_t start, finish;
 	char fileinname[AR_MAX_PATH], line[AUTOREFINE_MAX_LINE_LEN];
-	std::string inputFileName;
+	wxFileName inputFileName;
 	bool fileret;
 	FILE *fid;
 	StlFilePosMap filePosMap;
@@ -4584,36 +4584,36 @@ int CAutoRefine::ReadFastCapFile(CAutoRefGlobalVars *globalVars)
 	// called from FastModel (i.e. the output files, like
 	// the refined geometry, is output to the FasterCap launch
 	// directory and not to the current directory)
-	//inputFileName.Assign(globalVars->m_sFileIn);
-	//fileret = inputFileName.IsOk();
-	//if(fileret == false) {
-	//	ErrMsg("Filename '%s' is not well defined, aborting\n", globalVars->m_sFileIn.c_str());
-	//	return FC_FILE_ERROR;
-	//}
-	//fileret = inputFileName.MakeAbsolute();
-	//if(fileret == false) {
-	//	ErrMsg("Cannot convert the input file path '%s' to absolute, aborting\n", globalVars->m_sFileIn.c_str());
-	//	return FC_FILE_ERROR;
-	//}
-	//// test for existence, and if we have the priviledges to read it
-	//fileret = inputFileName.IsFileReadable();
-	//if(fileret == false) {
-	//	ErrMsg("File '%s' is not readable, either because not existing, of you don't have the rights to access the file\n", (const char*)inputFileName.GetFullPath());
-	//	return FC_CANNOT_OPEN_FILE;
-	//}
-	//wxSetWorkingDirectory(inputFileName.GetPath());
+	inputFileName.Assign(globalVars->m_sFileIn);
+	fileret = inputFileName.IsOk();
+	if(fileret == false) {
+		ErrMsg("Filename '%s' is not well defined, aborting\n", globalVars->m_sFileIn.c_str());
+		return FC_FILE_ERROR;
+	}
+	fileret = inputFileName.MakeAbsolute();
+	if(fileret == false) {
+		ErrMsg("Cannot convert the input file path '%s' to absolute, aborting\n", globalVars->m_sFileIn.c_str());
+		return FC_FILE_ERROR;
+	}
+	// test for existence, and if we have the priviledges to read it
+	fileret = inputFileName.IsFileReadable();
+	if(fileret == false) {
+		ErrMsg("File '%s' is not readable, either because not existing, of you don't have the rights to access the file\n", (const char*)inputFileName.GetFullPath());
+		return FC_CANNOT_OPEN_FILE;
+	}
+	wxSetWorkingDirectory(inputFileName.GetPath());
 	// if we now set the working directory, must delete the path part of the filename stored in the globalVars,
 	// otherwise next time, if we run multiple iterations, we'll always add the relative part of the path every time
-	globalVars->m_sFileIn = "";// inputFileName.GetFullName();
+	globalVars->m_sFileIn = inputFileName.GetFullName();
 
 
-	//strncpy(fileinname, (const char*)inputFileName.GetFullPath(), AR_MAX_PATH);
+	strncpy(fileinname, (const char*)inputFileName.GetFullPath(), AR_MAX_PATH);
 	fileinname[AR_MAX_PATH-1] = '\0';
 	// strncpy() gives no way to know if the string to be copied was too long, so the only way to know is to compare the two
-	//if(strcmp(fileinname, inputFileName.GetFullPath().c_str()) != 0) {
-	//	ErrMsg("Filename '%s' is too long, max number of allowed char in path+filename is %d\n", (const char*)inputFileName.GetFullPath(), AR_MAX_PATH);
-	//	return FC_FILE_ERROR;
-	//}
+	if(strcmp(fileinname, inputFileName.GetFullPath().c_str()) != 0) {
+		ErrMsg("Filename '%s' is too long, max number of allowed char in path+filename is %d\n", (const char*)inputFileName.GetFullPath(), AR_MAX_PATH);
+		return FC_FILE_ERROR;
+	}
 
 	// init member variables
 	//
@@ -4634,10 +4634,10 @@ int CAutoRefine::ReadFastCapFile(CAutoRefGlobalVars *globalVars)
 	globalVars->m_ucHasCmplxPerm = AUTOREFINE_REAL_PERM;
 
 	// understand the type of input file (2D or 3D)
-	fid = fopen(inputFileName.c_str(), "r");
+	fid = fopen(inputFileName.GetFullPath(), "r");
 
 	if(fid == NULL) {
-		//ErrMsg("Cannot open file '%s', aborting\n", (const char*)inputFileName.GetFullPath());
+		ErrMsg("Cannot open file '%s', aborting\n", (const char*)inputFileName.GetFullPath());
 		ret = FC_CANNOT_OPEN_FILE;
 	}
 	else {
