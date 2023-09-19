@@ -204,16 +204,16 @@ void CAutoRefine::Clean(int command, CAutoRefGlobalVars globalVars)
 			// get the temp file path and name from the ID
 			PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[k], tmpFileName);
 			// delete the file
-			if( remove((const char*)(tmpFileName.GetLongPath())) != 0 ) {
-				ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.GetLongPath()));
+			if( remove((const char*)(tmpFileName.c_str())) != 0 ) {
+				ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.c_str()));
 				ErrMsg("       Temporary files must be manually removed.\n");
 				ErrMsg("       Continuing with memory deallocation\n");
 			}
 			// get the temp file path and name from the ID
 			PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[k], tmpFileName);
 			// delete the file
-			if( remove((const char*)(tmpFileName.GetLongPath())) != 0 ) {
-				ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.GetLongPath()));
+			if( remove((const char*)(tmpFileName.c_str())) != 0 ) {
+				ErrMsg("Error: cannot delete the temporary file '%s'\n", (const char*)(tmpFileName.c_str()));
 				ErrMsg("       Temporary files must be manually removed.\n");
 				ErrMsg("       Continuing with memory deallocation\n");
 			}
@@ -522,21 +522,21 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 	mem_LinksTotal = mem_Potest + mem_pCharge;
 
 	// get available memory
-	mem_AvailVirtual = (long long) wxGetFreeMemory();
+	mem_AvailVirtual = 50000000L;// (long long)wxGetFreeMemory();
 // debug
 //mem_AvailVirtual = 50000000;
 
 	goOutOfCore = false;
-	if(mem_AvailVirtual.ToLong() == -1L) {
+	if(mem_AvailVirtual == -1L) {
 		ErrMsg("Error: cannot retrieve the information about the free memory quantity\n");
 		ErrMsg("       Cannot go out-of-core, continuing in-core\n");
 	}
-	else if( mem_LinksTotal.ToDouble() * globalVars.m_dOutOfCoreRatio < mem_AvailVirtual.ToDouble() ) {
+	else if( mem_LinksTotal * globalVars.m_dOutOfCoreRatio < mem_AvailVirtual ) {
 		// no need to go out of core
 	}
 	else {
-		LogMsg("Estimated memory required for storing panel interaction links is: %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE).ToLong());
-		LogMsg("Available free memory left is: %lu Mbytes\n", (mem_AvailVirtual/G_MEGABYTE).ToLong());
+		LogMsg("Estimated memory required for storing panel interaction links is: %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE));
+		LogMsg("Available free memory left is: %lu Mbytes\n", (mem_AvailVirtual/G_MEGABYTE));
 		LogMsg("Estimated links memory is more than %.0f%% of the available free memory. Going out-of-core.\n", 100.0f / globalVars.m_dOutOfCoreRatio);
 
 		// try to create a temporary file, to understand if we can access the temp directory
@@ -545,35 +545,35 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 
 		if(uniqueFileID == 0) {
 			// get the temp path
-			tmpFNObj.Assign(wxFileName::GetTempDir());
+			tmpFNObj="D:/";//(wxFileName::GetTempDir());
 
 			// remark: use long path name version (if possible), i.e. without '~'
-			ErrMsg("Error: cannot access the temporary folder '%s' to store out-of-core files\n", (const char*)(tmpFNObj.GetLongPath()));
+			ErrMsg("Error: cannot access the temporary folder '%s' to store out-of-core files\n", (const char*)(tmpFNObj.c_str()));
 			ErrMsg("       Cannot go out-of-core, continuing in-core\n");
 		}
 		else {
 			// remove the created temp file
-			remove(tmpFileName.GetFullPath().c_str());
+			remove(tmpFileName.c_str());
 
 			// get only the path part, w/o the file name
-			tmpFNObj.Assign(tmpFileName.GetPath());
+			tmpFNObj=tmpFileName.c_str();
 
-			LogMsg("Out-of-core temporary files folder: '%s'\n", (const char*)tmpFNObj.GetLongPath());
+			LogMsg("Out-of-core temporary files folder: '%s'\n", (const char*)tmpFNObj.c_str());
 
 			// and check the free space
 			// This function returns the total number of bytes and number of free bytes on the disk
 			//  containing the directory path (it should exist).
-			retBool = wxGetDiskSpace(tmpFileName.GetPath(), &freeDiskBytes);
+			retBool = false;// wxGetDiskSpace(tmpFileName.c_str(), &freeDiskBytes);
 
 			if(retBool == false) {
-				ErrMsg("Error: cannot retrieve the free space on disk for directory %s\n", (const char*)tmpFNObj.GetLongPath());
+				ErrMsg("Error: cannot retrieve the free space on disk for directory %s\n", (const char*)tmpFNObj.c_str());
 				ErrMsg("       Cannot go out-of-core, continuing in-core\n");
 			}
 			else {
-				if( freeDiskBytes < mem_LinksTotal ) {
-					ErrMsg("Error: free space in the temporary directory on disk is less than the required value of %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE).ToLong());
-					ErrMsg("       Cannot go out-of-core, trying to continue in-core\n");
-				}
+				//if( freeDiskBytes < mem_LinksTotal ) {
+				//	ErrMsg("Error: free space in the temporary directory on disk is less than the required value of %lu Mbytes\n", (mem_LinksTotal/G_MEGABYTE));
+				//	ErrMsg("       Cannot go out-of-core, trying to continue in-core\n");
+				//}
 
 				// ok we can go out-of-core
 				goOutOfCore = true;
@@ -583,7 +583,7 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 
 	if(goOutOfCore == true) {
 		// 'mem_AvailVirtual / globalVars.m_dOutOfCoreRatio' is the max ram memory block we decided to allocate for storing the chunks
-		mem_MaxAllocVirtual.Assign(mem_AvailVirtual.ToDouble() / globalVars.m_dOutOfCoreRatio);
+		mem_MaxAllocVirtual=(mem_AvailVirtual / globalVars.m_dOutOfCoreRatio);
 		// let's calculate how many chunks fit in this block size
 		// We use the wxLongLong division, which is available either with native 64 bits integers or through wxWidgets
 		// implementation (remark: the class documentation does not report some operators, including '/', '<', etc.).
@@ -595,7 +595,7 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 		// Remark: all values are casted to wxLongLong before operations happen, to avoid implicit conversions that may lead
 		// to errors, e.g. if 'AUTOREFINE_LINK_CHUNK_SIZE' is considered long, sizeof is considered long, but their product
 		// needs more than 32 bits to be stored; not likely, but to be avoided anyway
-		m_ulLinkChunkNum[m_ucInteractionLevel] = ( mem_MaxAllocVirtual / ( ((long long)AUTOREFINE_LINK_CHUNK_SIZE) * ((long long)(sizeof(double) + sizeof(double*))) ) ).ToLong();
+		m_ulLinkChunkNum[m_ucInteractionLevel] = ( mem_MaxAllocVirtual / ( ((long long)AUTOREFINE_LINK_CHUNK_SIZE) * ((long long)(sizeof(double) + sizeof(double*))) ) );
 		if(m_ulLinkChunkNum[m_ucInteractionLevel] == 0) {
 			ErrMsg("Error: available free memory is not enough to allocate any chunk\n");
 			ErrMsg("       Cannot go out-of-core, terminating process\n");
@@ -604,7 +604,7 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 		// let's calculate the real size of the memory block (it has been rounded down to fit entire chunks)
 		mem_AllocVirtual = ((long long)AUTOREFINE_LINK_CHUNK_SIZE) * ((long long)(sizeof(double) + sizeof(double*))) * ((long long)m_ulLinkChunkNum[m_ucInteractionLevel]);
 		// now let's calculate how many blocks we need
-		m_ulBlocksNum = (unsigned long) (mem_LinksTotal / mem_AllocVirtual).ToLong();
+		m_ulBlocksNum = (unsigned long) (mem_LinksTotal / mem_AllocVirtual);
 		// result of the division is rounded towards zero (truncated). So if there is a remainder, need one block more
 		if(mem_LinksTotal % mem_AllocVirtual != 0) {
 			m_ulBlocksNum++;
@@ -639,7 +639,7 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 
 				uniqueFileID = PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, 0, tmpFileName);
 				if(uniqueFileID == 0) {
-					ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.GetFullPath());
+					ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.c_str());
 					ErrMsg("       Cannot go out-of-core, stopping process\n");
 
 					return FC_CANNOT_GO_OOC;
@@ -648,7 +648,7 @@ int CAutoRefine::AutoRefineLinks(CAutoRefGlobalVars globalVars)
 
 				uniqueFileID = PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, 0, tmpFileName);
 				if(uniqueFileID == 0) {
-					ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.GetFullPath());
+					ErrMsg("Error: cannot create the temporary file '%s', to store out-of-core files\n", (const char*)tmpFileName.c_str());
 					ErrMsg("       Cannot go out-of-core, stopping process\n");
 
 					return FC_CANNOT_GO_OOC;
@@ -851,7 +851,7 @@ int CAutoRefine::SaveLinks(bool saveAlsoPot)
 {
 	FILE *stream;
 	unsigned long j, k, start;
-	wxFileName tmpFileName;
+	std::string tmpFileName;
 	int numwritten, ret;
 
 	ret = FC_NORMAL_END;
@@ -862,9 +862,9 @@ int CAutoRefine::SaveLinks(bool saveAlsoPot)
 
 		PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[start + j], tmpFileName);
 		// open the file
-		stream = fopen(tmpFileName.GetLongPath(), "wb");
+		stream = fopen(tmpFileName.c_str(), "wb");
 		if( stream == NULL ) {
-			ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.GetLongPath());
+			ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.c_str());
 			return FC_FILE_ERROR;
 		}
 
@@ -884,9 +884,9 @@ int CAutoRefine::SaveLinks(bool saveAlsoPot)
 		if(saveAlsoPot == true && j < m_ulLinkChunkNum[m_ucInteractionLevel]) {
 			PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[start + j], tmpFileName);
 			// open the file
-			stream = fopen(tmpFileName.GetLongPath(), "wb");
+			stream = fopen(tmpFileName.c_str(), "wb");
 			if( stream == NULL ) {
-				ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.GetLongPath());
+				ErrMsg("Error: cannot open the temporary file '%s' for writing\n", (const char*)tmpFileName.c_str());
 				return FC_FILE_ERROR;
 			}
 
@@ -912,7 +912,7 @@ int CAutoRefine::LoadLinks(unsigned long block, bool loadAlsoPot)
 {
 	FILE *stream;
 	unsigned long j, k, start;
-	wxFileName tmpFileName;
+	std::string tmpFileName;
 	int numwritten, ret;
 
 	ret = FC_NORMAL_END;
@@ -926,9 +926,9 @@ int CAutoRefine::LoadLinks(unsigned long block, bool loadAlsoPot)
 
 		PortableGetTempFileName((""), FC_LINK_TMP_FILE_PREFIX, m_ulUniqueLinkChunkIDs[start + j], tmpFileName);
 		// open the file
-		stream = fopen(tmpFileName.GetFullPath().c_str(), "rb");
+		stream = fopen(tmpFileName.c_str(), "rb");
 		if( stream == NULL ) {
-			ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.GetFullPath());
+			ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.c_str());
 			return FC_FILE_ERROR;
 		}
 
@@ -954,9 +954,9 @@ int CAutoRefine::LoadLinks(unsigned long block, bool loadAlsoPot)
 		if(loadAlsoPot == true && j < m_ulLinkChunkNum[m_ucInteractionLevel]) {
 			PortableGetTempFileName((""), FC_POT_TMP_FILE_PREFIX, m_ulUniquePotChunkIDs[start + j], tmpFileName);
 			// open the file
-			stream = fopen(tmpFileName.GetFullPath().c_str(), "rb");
+			stream = fopen(tmpFileName.c_str(), "rb");
 			if( stream == NULL ) {
-				ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.GetFullPath());
+				ErrMsg("Error: cannot open the temporary file '%s' for reading\n", (const char*)tmpFileName.c_str());
 				return FC_FILE_ERROR;
 			}
 
@@ -1000,65 +1000,66 @@ unsigned long CAutoRefine::PortableGetTempFileName(const std::string&dirName, co
 	int i, j;
 	FILE *fout;
 
+	filenameobj = "D:/";
 	// clean up the file name object
-	filenameobj.Clear();
+	//filenameobj.Clear();
 
 	// extract the directory specified by 'dirName'
-	wxFileName::SplitPath(dirName, &dir, &name, NULL);
+	//wxFileName::SplitPath(dirName, &dir, &name, NULL);
 
 	// if dirName specified an empty path
-	if (dir.empty() == true) {
-		dir = wxFileName::GetTempDir();
-	}
+	//if (dir.empty() == true) {
+	//	dir = wxFileName::GetTempDir();
+	//}
 
-	if(id != 0) {
-		// must not create the file, only the filename, and do not test for uniqueness
-		//
-		// compose the name
-		name = prefix + wxString::Format(("%lX"), id) + (".tmp");
-		// merge the path and the filename
-		filenameobj.Assign(dir, name);
-	}
-	else {
-		id = m_ulTempFileID;
-		for(id=m_ulTempFileID, i=0; i<AR_MAX_TEMP_IDS; i++) {
-			for(j=0; j<AR_MAX_TEMP_IDS; j++, id++ ) {
-				// compose the name
-				name = prefix + wxString::Format(("%lX"), id) + (".tmp");
-				// merge the path and the filename
-				filenameobj.Assign(dir, name);
-				if(filenameobj.FileExists() == false) {
-					break;
-				}
-			}
-			if(filenameobj.FileExists() == false) {
-				break;
-			}
-			else {
-				// get a new base ID chosen randomly
-				id = (unsigned long) rand();
-			}
-		}
-		// store the next id for the next time the function will be called
-		m_ulTempFileID = id + 1;
-		// if in the end we did NOT found the name, assign zero to 'id' to signal it to the caller
-		if(filenameobj.FileExists() == true) {
-			id = 0;
-		}
-		else {
-			// now create the file to:
-			// 1) test we have the right priviledges to write in this directory
-			// 2) 'book' the file name to prevent others from creating the same file name,
-			//    before the caller could have the chance to actually use it
-			fout = fopen(filenameobj.GetFullPath().c_str(), "w");
-			if(fout == NULL) {
-				id = 0;
-			}
-			else {
-				fclose(fout);
-			}
-		}
-	}
+	//if(id != 0) {
+	//	// must not create the file, only the filename, and do not test for uniqueness
+	//	//
+	//	// compose the name
+	//	name = prefix + wxString::Format(("%lX"), id) + (".tmp");
+	//	// merge the path and the filename
+	//	filenameobj.Assign(dir, name);
+	//}
+	//else {
+	//	id = m_ulTempFileID;
+	//	for(id=m_ulTempFileID, i=0; i<AR_MAX_TEMP_IDS; i++) {
+	//		for(j=0; j<AR_MAX_TEMP_IDS; j++, id++ ) {
+	//			// compose the name
+	//			name = prefix + wxString::Format(("%lX"), id) + (".tmp");
+	//			// merge the path and the filename
+	//			filenameobj.Assign(dir, name);
+	//			if(filenameobj.FileExists() == false) {
+	//				break;
+	//			}
+	//		}
+	//		if(filenameobj.FileExists() == false) {
+	//			break;
+	//		}
+	//		else {
+	//			// get a new base ID chosen randomly
+	//			id = (unsigned long) rand();
+	//		}
+	//	}
+	//	// store the next id for the next time the function will be called
+	//	m_ulTempFileID = id + 1;
+	//	// if in the end we did NOT found the name, assign zero to 'id' to signal it to the caller
+	//	if(filenameobj.FileExists() == true) {
+	//		id = 0;
+	//	}
+	//	else {
+	//		// now create the file to:
+	//		// 1) test we have the right priviledges to write in this directory
+	//		// 2) 'book' the file name to prevent others from creating the same file name,
+	//		//    before the caller could have the chance to actually use it
+	//		fout = fopen(filenameobj.c_str(), "w");
+	//		if(fout == NULL) {
+	//			id = 0;
+	//		}
+	//		else {
+	//			fclose(fout);
+	//		}
+	//	}
+	//}
 
 	return id;
 }
@@ -1068,9 +1069,9 @@ void CAutoRefine::DumpMemoryInfo()
 	long long freeMem;
 
 	// get available memory
-	freeMem = (long long) wxGetFreeMemory();
+	freeMem = 0L;// (long long)wxGetFreeMemory();
 
-	LogMsg("Available virtual memory: %lu kilobytes\n", (freeMem/G_KILOBYTE).ToLong());
+	LogMsg("Available virtual memory: %lu kilobytes\n", (freeMem/G_KILOBYTE));
 
     // Non-portable method
 	/*
@@ -1235,7 +1236,7 @@ void CAutoRefine::OutputFastCapFile(std::string fileinname, std::string suffix, 
 	std::string condfilenameext, condfilenopathext, ext;
 	std::string::size_type pos;
 	int i;
-	wxString dielIndexStr;
+	std::string dielIndexStr;
 
 	m_pLocalCondCharge = condCharges;
 
@@ -1301,7 +1302,7 @@ void CAutoRefine::OutputFastCapFile(std::string fileinname, std::string suffix, 
 			for(i=0; i<(*itc)->m_ucMaxSurfOutperm; i++) {
 				// compose the extension
 				ext = "_";
-				dielIndexStr = wxString::Format("%d", i);
+				dielIndexStr = std::to_string(i);
 				ext += dielIndexStr.c_str();
 				ext += ".txt";
 				// and build the file names
@@ -4571,7 +4572,7 @@ int CAutoRefine::ReadFastCapFile(CAutoRefGlobalVars *globalVars)
 	long ret;
 	clock_t start, finish;
 	char fileinname[AR_MAX_PATH], line[AUTOREFINE_MAX_LINE_LEN];
-	wxFileName inputFileName;
+	std::string inputFileName;
 	bool fileret;
 	FILE *fid;
 	StlFilePosMap filePosMap;
@@ -4584,34 +4585,34 @@ int CAutoRefine::ReadFastCapFile(CAutoRefGlobalVars *globalVars)
 	// called from FastModel (i.e. the output files, like
 	// the refined geometry, is output to the FasterCap launch
 	// directory and not to the current directory)
-	inputFileName.Assign(globalVars->m_sFileIn);
-	fileret = inputFileName.IsOk();
-	if(fileret == false) {
-		ErrMsg("Filename '%s' is not well defined, aborting\n", globalVars->m_sFileIn.c_str());
-		return FC_FILE_ERROR;
-	}
-	fileret = inputFileName.MakeAbsolute();
-	if(fileret == false) {
-		ErrMsg("Cannot convert the input file path '%s' to absolute, aborting\n", globalVars->m_sFileIn.c_str());
-		return FC_FILE_ERROR;
-	}
+	inputFileName = globalVars->m_sFileIn;
+	//fileret = inputFileName.IsOk();
+	//if(fileret == false) {
+	//	ErrMsg("Filename '%s' is not well defined, aborting\n", globalVars->m_sFileIn.c_str());
+	//	return FC_FILE_ERROR;
+	//}
+	//fileret = inputFileName.MakeAbsolute();
+	//if(fileret == false) {
+	//	ErrMsg("Cannot convert the input file path '%s' to absolute, aborting\n", globalVars->m_sFileIn.c_str());
+	//	return FC_FILE_ERROR;
+	//}
 	// test for existence, and if we have the priviledges to read it
-	fileret = inputFileName.IsFileReadable();
-	if(fileret == false) {
-		ErrMsg("File '%s' is not readable, either because not existing, of you don't have the rights to access the file\n", (const char*)inputFileName.GetFullPath());
-		return FC_CANNOT_OPEN_FILE;
-	}
-	wxSetWorkingDirectory(inputFileName.GetPath());
+	//fileret = inputFileName.IsFileReadable();
+	//if(fileret == false) {
+	//	ErrMsg("File '%s' is not readable, either because not existing, of you don't have the rights to access the file\n", (const char*)inputFileName.GetFullPath());
+	//	return FC_CANNOT_OPEN_FILE;
+	//}
+	//wxSetWorkingDirectory(inputFileName.GetPath());
 	// if we now set the working directory, must delete the path part of the filename stored in the globalVars,
 	// otherwise next time, if we run multiple iterations, we'll always add the relative part of the path every time
-	globalVars->m_sFileIn = inputFileName.GetFullName();
+	//globalVars->m_sFileIn = inputFileName.GetFullName();
 
 
-	strncpy(fileinname, (const char*)inputFileName.GetFullPath(), AR_MAX_PATH);
+	strncpy(fileinname, (const char*)inputFileName.c_str(), AR_MAX_PATH);
 	fileinname[AR_MAX_PATH-1] = '\0';
 	// strncpy() gives no way to know if the string to be copied was too long, so the only way to know is to compare the two
-	if(strcmp(fileinname, inputFileName.GetFullPath().c_str()) != 0) {
-		ErrMsg("Filename '%s' is too long, max number of allowed char in path+filename is %d\n", (const char*)inputFileName.GetFullPath(), AR_MAX_PATH);
+	if(strcmp(fileinname, inputFileName.c_str()) != 0) {
+		ErrMsg("Filename '%s' is too long, max number of allowed char in path+filename is %d\n", (const char*)inputFileName.c_str(), AR_MAX_PATH);
 		return FC_FILE_ERROR;
 	}
 
@@ -4634,10 +4635,10 @@ int CAutoRefine::ReadFastCapFile(CAutoRefGlobalVars *globalVars)
 	globalVars->m_ucHasCmplxPerm = AUTOREFINE_REAL_PERM;
 
 	// understand the type of input file (2D or 3D)
-	fid = fopen(inputFileName.GetFullPath(), "r");
+	fid = fopen(inputFileName.c_str(), "r");
 
 	if(fid == NULL) {
-		ErrMsg("Cannot open file '%s', aborting\n", (const char*)inputFileName.GetFullPath());
+		ErrMsg("Cannot open file '%s', aborting\n", (const char*)inputFileName.c_str());
 		ret = FC_CANNOT_OPEN_FILE;
 	}
 	else {
